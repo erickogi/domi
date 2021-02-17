@@ -20,8 +20,6 @@ jobs:
           release_name: Release ${{ github.ref }}
           body: |
             This domi release includes:
-            - CODEOWNERS
-            - tests workflow
-            - release workflow
+            - Basic Web Service
           draft: false
           prerelease: false
