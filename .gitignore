@@ -15,3 +15,7 @@
 # vendor/
 
 .gitorade
+
+# Generated Binaries
+
+bin/
