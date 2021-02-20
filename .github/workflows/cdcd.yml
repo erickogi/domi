@@ -50,7 +50,7 @@ jobs:
           kubectl get svc
 
       - name: Helm Install
-        run: helm install domi ./domi-chart
+        run: helm upgrade domi ./domi-chart
 
       - name: domi URL
         run: |
