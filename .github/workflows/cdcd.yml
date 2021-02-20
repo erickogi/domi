@@ -28,6 +28,6 @@ jobs:
         with:
           context: .
           push: true
-          tags: devops-kung-fu/domi:latest
+          tags: ghcr.io/devops-kung-fu/domi:latest
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
