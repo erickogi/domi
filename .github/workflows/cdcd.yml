@@ -8,7 +8,13 @@ jobs:
     name: Build, Push, and Deploy
     runs-on: ubuntu-latest
     steps:
-      - name: Build domi Linux A=amd64
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.15.8'
+      - name: Build domi Linux amd64
         run: GOOS=linux GOARCH=amd64 go build -o bin/domi github.com/devops-kung-fu/domi
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
