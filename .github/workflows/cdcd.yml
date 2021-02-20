@@ -44,8 +44,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Configure kubectl
+      - name: Configure .kubeconfig
         run: |
-          curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
-          chmod +x ./kubectl
-          ./kubectl version
+          aws eks --region us-east-1 update-kubeconfig --name domi-test
+          kubectl get svc
