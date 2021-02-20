@@ -1,0 +1,33 @@
+name: domi Build, Push, and Deploy
+on:
+  push:
+    tags:
+      - 'v*'
+jobs:
+  build:
+    name: Build, Push, and Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.15.8'
+      - name: Build domi Linux amd64
+        run: GOOS=linux GOARCH=amd64 go build -o bin/domi github.com/devops-kung-fu/domi
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Docker Build and Push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/devops-kung-fu/domi:latest
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
