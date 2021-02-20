@@ -20,6 +20,6 @@ jobs:
           release_name: Release ${{ github.ref }}
           body: |
             This domi release includes:
-            - Basic Web Service
+            - Container Build and Push to GHCR
           draft: false
           prerelease: false
