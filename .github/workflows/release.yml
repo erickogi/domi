@@ -30,4 +30,4 @@ jobs:
           docker-image-name: domi-open-source
           docker-image-tag: latest
           dockerfile-path: Dockerfile
-          build-context: ./
+          build-context: "."
