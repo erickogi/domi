@@ -1,0 +1,27 @@
+name: domi Build and Push
+on:
+  push:
+    tags:
+      - 'v*'
+jobs:
+  build:
+    name: Build, Push, and Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: make build-amd64
+        run: make build-amd64
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: devops-kung-fu/domi:latest
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
