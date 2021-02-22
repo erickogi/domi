@@ -9,9 +9,14 @@ import (
 func SetupRouter() *gin.Engine {
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
+	misc := r.Group("/")
+	{
+		misc.GET("alive", controllers.CanYouHearMeNow)
+	}
 	github := r.Group("/github/v1")
 	{
 		github.POST("webhook", controllers.ReceiveGitHubWebHook)
 	}
+	
 	return r
 }
