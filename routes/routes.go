@@ -6,7 +6,7 @@ import (
 )
 
 // SetupRouter - Set up gin router
-func SetupRouter() *gin.Engine {
+func SetupRouter() *gin.Engine { 
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 	misc := r.Group("/")

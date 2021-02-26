@@ -45,7 +45,13 @@ spec:
             httpGet:
               path: /alive
               port: http
-          resources:
+          env:
+          - name: GITHUB_ACCESS_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: github-pat
+                key: github_pat
+         resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
