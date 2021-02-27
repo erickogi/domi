@@ -35,6 +35,11 @@ spec:
                 secretKeyRef:
                   name: github-pat
                   key: github_pat
+            - name: "GITHUB_WEBHOOK_SECRET"
+              valueFrom:
+                secretKeyRef:
+                  name: github-webhook
+                  key: github_webhook_secret
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
