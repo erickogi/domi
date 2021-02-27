@@ -33,5 +33,12 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 			c.String(http.StatusNotImplemented, "This event has not been implemented.")
 		}
 	}
+	switch payload.(type) {
+	case github.PushPayload:
+		push := payload.(github.PushPayload)
+		installationID := push.Installation.ID
+		githubProvider.InstallationID = installationID
+		
+	}
 	c.JSON(http.StatusOK, payload.(github.PushPayload))
 }
