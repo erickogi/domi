@@ -5,7 +5,6 @@ import (
 
 	"github.com/devops-kung-fu/domi/lib"
 	"github.com/gin-gonic/gin"
-	"google.golang.org/appengine/log"
 	"gopkg.in/go-playground/webhooks.v5/github"
 )
 
@@ -38,7 +37,7 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 		push := payload.(github.PushPayload)
 		installationID := push.Installation.ID
 		githubProvider.InstallationID = installationID
-		
+
 	}
 	c.JSON(http.StatusOK, payload.(github.PushPayload))
 }
