@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/devops-kung-fu/domi/lib"
@@ -37,7 +39,12 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 		push := payload.(github.PushPayload)
 		installationID := push.Installation.ID
 		githubProvider.InstallationID = installationID
-
+		_, err := githubProvider.GitHubAuthenticator()
+		if err != nil {
+			fmt.Println("GitHub Provider Authentication Failed")
+			c.Error(errors.New("GitHub Provider Authentication Failed"))
+		}
+		fmt.Println("GitHub Provider Authentication Succeeded")
 	}
 	c.JSON(http.StatusOK, payload.(github.PushPayload))
 }
