@@ -8,7 +8,7 @@ import (
 // SetupRouter - Set up gin router
 func SetupRouter() *gin.Engine { 
 	gin.SetMode(gin.ReleaseMode)
-	r := gin.Default()
+	r := gin.New()
 	misc := r.Group("/")
 	{
 		misc.GET("alive", controllers.CanYouHearMeNow)
