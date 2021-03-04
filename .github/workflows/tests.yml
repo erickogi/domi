@@ -25,3 +25,12 @@ jobs:
           cd routes
           go test -v -coverprofile=coverage.out
           go tool cover -func=coverage.out
+      - name: Lib Tests
+        run: |
+          cd lib
+          go test -v -coverprofile=coverage.out
+          go tool cover -func=coverage.out
+      - name: CodeCov
+        run: bash <(curl -s https://codecov.io/bash)
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
