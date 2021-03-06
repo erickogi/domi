@@ -1,12 +1,15 @@
 package controllers
 
 import (
+	"context"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/devops-kung-fu/domi/lib"
 	"github.com/gin-gonic/gin"
+	ghclient "github.com/google/go-github/v33/github"
 	"gopkg.in/go-playground/webhooks.v5/github"
 )
 
@@ -17,6 +20,7 @@ func CanYouHearMeNow(c *gin.Context) {
 
 // ReceiveGitHubWebHook - Receives and processes GitHub WebHook Events
 func ReceiveGitHubWebHook(c *gin.Context) {
+	ctx := context.Background()
 	githubProvider, err := lib.NewGitHubProvider()
 	if err != nil {
 		http.Error(c.Writer, "Could not get a provider.", 500)
@@ -28,23 +32,32 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 	} else {
 		hook, _ = github.New()
 	}	
-	payload, err := hook.Parse(c.Request, github.PushEvent)
+	payload, err := hook.Parse(c.Request, github.CheckSuiteEvent)
 	if err != nil {
 		if err == github.ErrEventNotFound {
 			c.String(http.StatusNotImplemented, "This event has not been implemented.")
 		}
 	}
+	c.String(http.StatusOK, "Payload Received")
 	switch payload.(type) {
-	case github.PushPayload:
-		push := payload.(github.PushPayload)
-		installationID := push.Installation.ID
+	case github.CheckSuitePayload:
+		check := payload.(github.CheckSuitePayload)
+		installationID := payload.(ghclient.Installation).ID
 		githubProvider.InstallationID = installationID
-		_, err := githubProvider.GitHubAuthenticator()
+		owner := check.Repository.Owner.Login
+		repo := check.Repository.Name
+		sha := check.CheckSuite.HeadSHA
+		githubClient, err := githubProvider.GitHubAuthenticator()
 		if err != nil {
 			log.Println("GitHub Provider Authentication Failed")
 			c.Error(errors.New("GitHub Provider Authentication Failed"))
 		}
 		log.Println("GitHub Provider Authentication Succeeded")
+		archiveLink, _, err := githubClient.Repositories.GetArchiveLink(ctx, owner, repo, "zipball", &ghclient.RepositoryContentGetOptions{Ref: sha}, true)
+		if err != nil {
+			c.Error(err)
+		}
+		archiveURL := archiveLink.String()
+		fmt.Println(archiveURL)
 	}
-	c.JSON(http.StatusOK, payload.(github.PushPayload))
 }
