@@ -32,18 +32,22 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 	} else {
 		hook, _ = github.New()
 	}	
-	payload, err := hook.Parse(c.Request, github.CheckSuiteEvent)
+	payload, err := hook.Parse(c.Request, github.CheckSuiteEvent, github.CheckRunEvent)
 	if err != nil {
 		if err == github.ErrEventNotFound {
 			c.String(http.StatusNotImplemented, "This event has not been implemented.")
 		}
 	}
+	
 	c.String(http.StatusOK, "Payload Received")
 	switch payload.(type) {
 	case github.CheckSuitePayload:
 		check := payload.(github.CheckSuitePayload)
-		installationID := payload.(ghclient.Installation).ID
-		githubProvider.InstallationID = installationID
+		// if check.InstallationID != "" {
+		// 	installationID := check.InstallationID
+		// 	githubProvider.InstallationID = installationID
+		// }
+		
 		owner := check.Repository.Owner.Login
 		repo := check.Repository.Name
 		sha := check.CheckSuite.HeadSHA
