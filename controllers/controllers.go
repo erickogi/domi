@@ -50,7 +50,7 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 			// }
 			owner := push.Repository.Owner.Login
 			repo := push.Repository.Name
-			sha := push.Before
+			sha := push.After
 			githubClient, err := githubProvider.GitHubAuthenticator()
 			if err != nil {
 				log.Println("GitHub Provider Authentication Failed")
