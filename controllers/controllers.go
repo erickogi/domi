@@ -71,7 +71,7 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 			if unzipErr != nil {
 				cCopy.Error(err)
 			}
-			foundFiles, e := lib.FindFiles(fs, fmt.Sprintf("/tmp/%s", domiID), ".*\\.(tf|yaml|yml)")
+			foundFiles, e := lib.FindFiles(fs, fmt.Sprintf("/tmp/%s", domiID), ".*\\.(tf)")
 			if e != nil {
 				cCopy.Error(e)
 			}
