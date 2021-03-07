@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -73,7 +74,7 @@ func DownloadFile(fs fileSystem, url string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	fmt.Printf("Downloaded %s as %s\n", url, fileName)
+	log.Printf("Downloaded %s as %s\n", url, fileName)
 	return thisUUID, nil
 }
 
@@ -119,6 +120,6 @@ func UnZip(source string, destination string) error {
 			return err
 		}
 	}
-	fmt.Printf("Extracted %s into %s", source, destination)
+	log.Printf("Extracted %s into %s", source, destination)
 	return nil
 }
