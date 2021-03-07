@@ -44,7 +44,6 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 		cCopy := c.Copy()
 		go func() {
 			push := payload.(github.PushPayload)
-			log.Println("Anyone in here!?")
 			// if check.InstallationID != "" {
 			// 	installationID := check.InstallationID
 			// 	githubProvider.InstallationID = installationID
@@ -71,7 +70,12 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 			unzipErr := lib.UnZip(fmt.Sprintf("/tmp/%s.zip", domiID), fmt.Sprintf("/tmp/%s", domiID))
 			if unzipErr != nil {
 				cCopy.Error(err)
-			}				
+			}
+			foundFiles, e := lib.FindFiles(fs, fmt.Sprintf("/tmp/%s", domiID), ".*\\.(tf|yaml|yml)")
+			if e != nil {
+				cCopy.Error(e)
+			}
+			log.Println(foundFiles)
 		}()
 		c.String(http.StatusOK, "Payload Received")
 	default:
