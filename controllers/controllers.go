@@ -43,25 +43,36 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 	switch payload.(type) {
 	case github.CheckSuitePayload:
 		check := payload.(github.CheckSuitePayload)
-		// if check.InstallationID != "" {
-		// 	installationID := check.InstallationID
-		// 	githubProvider.InstallationID = installationID
-		// }
-		
-		owner := check.Repository.Owner.Login
-		repo := check.Repository.Name
-		sha := check.CheckSuite.HeadSHA
-		githubClient, err := githubProvider.GitHubAuthenticator()
-		if err != nil {
-			log.Println("GitHub Provider Authentication Failed")
-			c.Error(errors.New("GitHub Provider Authentication Failed"))
+		if check.Action == "requested " || check.Action == "rerequested" {
+			// if check.InstallationID != "" {
+			// 	installationID := check.InstallationID
+			// 	githubProvider.InstallationID = installationID
+			// }
+			owner := check.Repository.Owner.Login
+			repo := check.Repository.Name
+			sha := check.CheckSuite.HeadSHA
+			githubClient, err := githubProvider.GitHubAuthenticator()
+			if err != nil {
+				log.Println("GitHub Provider Authentication Failed")
+				c.Error(errors.New("GitHub Provider Authentication Failed"))
+			}
+			log.Println("GitHub Provider Authentication Succeeded")
+			archiveLink, _, err := githubClient.Repositories.GetArchiveLink(ctx, owner, repo, "zipball", &ghclient.RepositoryContentGetOptions{Ref: sha}, true)
+			if err != nil {
+				c.Error(err)
+			}
+			archiveURL := archiveLink.String()
+			fs := lib.OSFS{}
+			domiID, err := lib.DownloadFile(fs, archiveURL)
+			if err != nil {
+				c.Error(err)
+			}
+			unzipErr := lib.UnZip(fmt.Sprintf("/tmp/%s.zip", domiID), fmt.Sprintf("/tmp/%s", domiID))
+			if unzipErr != nil {
+				c.Error(err)
+			}
 		}
-		log.Println("GitHub Provider Authentication Succeeded")
-		archiveLink, _, err := githubClient.Repositories.GetArchiveLink(ctx, owner, repo, "zipball", &ghclient.RepositoryContentGetOptions{Ref: sha}, true)
-		if err != nil {
-			c.Error(err)
-		}
-		archiveURL := archiveLink.String()
-		fmt.Println(archiveURL)
+	default:
+		c.String(http.StatusNotImplemented, "Event Not Implemented")
 	}
 }
