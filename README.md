@@ -14,6 +14,8 @@ Features:
 
 ## Container Image
 
+ghcr.io/devops-kung-fu/domi@`version`
+
 ## Building from Source
 
 After cloning the repository, utilize make to build the application.  Simply typing _make_ at the command line will display help for the defined targets in the Makefile.
