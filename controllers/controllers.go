@@ -32,50 +32,46 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 	} else {
 		hook, _ = github.New()
 	}	
-	payload, err := hook.Parse(c.Request, github.CheckSuiteEvent, github.CheckRunEvent)
+	payload, err := hook.Parse(c.Request, github.PushEvent, github.CheckRunEvent)
 	if err != nil {
 		if err == github.ErrEventNotFound {
 			c.String(http.StatusNotImplemented, "This event has not been implemented.")
 		}
 	}
 	
-	
 	switch payload.(type) {
-	case github.CheckSuitePayload:
+	case github.PushPayload:
 		cCopy := c.Copy()
 		go func() {
-			check := payload.(github.CheckSuitePayload)
+			push := payload.(github.PushPayload)
 			log.Println("Anyone in here!?")
-			if check.Action == "requested " || check.Action == "rerequested" {
-				// if check.InstallationID != "" {
-				// 	installationID := check.InstallationID
-				// 	githubProvider.InstallationID = installationID
-				// }
-				owner := check.Repository.Owner.Login
-				repo := check.Repository.Name
-				sha := check.CheckSuite.HeadSHA
-				githubClient, err := githubProvider.GitHubAuthenticator()
-				if err != nil {
-					log.Println("GitHub Provider Authentication Failed")
-					cCopy.Error(errors.New("GitHub Provider Authentication Failed"))
-				}
-				log.Println("GitHub Provider Authentication Succeeded")
-				archiveLink, _, err := githubClient.Repositories.GetArchiveLink(ctx, owner, repo, "zipball", &ghclient.RepositoryContentGetOptions{Ref: sha}, true)
-				if err != nil {
-					cCopy.Error(err)
-				}
-				archiveURL := archiveLink.String()
-				fs := lib.OSFS{}
-				domiID, err := lib.DownloadFile(fs, archiveURL)
-				if err != nil {
-					cCopy.Error(err)
-				}
-				unzipErr := lib.UnZip(fmt.Sprintf("/tmp/%s.zip", domiID), fmt.Sprintf("/tmp/%s", domiID))
-				if unzipErr != nil {
-					cCopy.Error(err)
-				}
-				
+			// if check.InstallationID != "" {
+			// 	installationID := check.InstallationID
+			// 	githubProvider.InstallationID = installationID
+			// }
+			owner := push.Repository.Owner.Login
+			repo := push.Repository.Name
+			sha := push.Before
+			githubClient, err := githubProvider.GitHubAuthenticator()
+			if err != nil {
+				log.Println("GitHub Provider Authentication Failed")
+				cCopy.Error(errors.New("GitHub Provider Authentication Failed"))
 			}
+			log.Println("GitHub Provider Authentication Succeeded")
+			archiveLink, _, err := githubClient.Repositories.GetArchiveLink(ctx, owner, repo, "zipball", &ghclient.RepositoryContentGetOptions{Ref: sha}, true)
+			if err != nil {
+				cCopy.Error(err)
+			}
+			archiveURL := archiveLink.String()
+			fs := lib.OSFS{}
+			domiID, err := lib.DownloadFile(fs, archiveURL)
+			if err != nil {
+				cCopy.Error(err)
+			}
+			unzipErr := lib.UnZip(fmt.Sprintf("/tmp/%s.zip", domiID), fmt.Sprintf("/tmp/%s", domiID))
+			if unzipErr != nil {
+				cCopy.Error(err)
+			}				
 		}()
 		c.String(http.StatusOK, "Payload Received")
 	default:
