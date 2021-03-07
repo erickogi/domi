@@ -45,6 +45,7 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 		cCopy := c.Copy()
 		go func() {
 			check := payload.(github.CheckSuitePayload)
+			log.Println("Anyone in here!?")
 			if check.Action == "requested " || check.Action == "rerequested" {
 				// if check.InstallationID != "" {
 				// 	installationID := check.InstallationID
