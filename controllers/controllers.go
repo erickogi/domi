@@ -98,7 +98,7 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 					},
 				})
 				if checkError != nil {
-					cCopy.Error(checkError)
+					log.Println(checkError)
 				}
 			}
 		}()
