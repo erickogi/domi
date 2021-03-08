@@ -28,6 +28,8 @@ After cloning the repository, utilize make to build the application.  Simply typ
 | docker | Builds the docker file                                  |
 | run    | Starts domi locally on the port defined in _config.env_ |
 
+## Environment Variables
+
 ## What's with the name Domi?
 
 The name domi is a shout out to one of the greatest enforcers of all time in the NHL - [Tie Domi](https://en.wikipedia.org/wiki/Tie_Domi). He's best known as a fighter, and holds the all-time record of the most fighting majors (333).
