@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/devops-kung-fu/domi/lib"
 	"github.com/gin-gonic/gin"
@@ -71,11 +72,32 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 			if unzipErr != nil {
 				cCopy.Error(err)
 			}
-			foundFiles, e := lib.FindFiles(fs, fmt.Sprintf("/tmp/%s", domiID), ".*\\.(tf)")
+			foundFiles, e := lib.FindFiles(fs, fmt.Sprintf("/tmp/%s", domiID), ".*\\.(tf|yaml|yml)")
 			if e != nil {
 				cCopy.Error(e)
 			}
-			log.Println(foundFiles)
+			status := "queued"
+			conclusion := "neutral"
+			startedAt := time.Now()
+			title := "domi - Policy-as-Code Enforcer"
+			summary := "Please stand by while we scan your repository... :thumbs-up:"
+			text := "Something can go here"
+			if len(foundFiles) > 0 {
+				githubClient.Checks.CreateCheckRun(ctx, owner, repo, ghclient.CreateCheckRunOptions{
+					Name:	"domi",
+					HeadSHA: sha,
+					Status: &status,
+					Conclusion: &conclusion,
+					StartedAt: &ghclient.Timestamp{
+						Time: startedAt,
+					},
+					Output: &ghclient.CheckRunOutput{
+						Title: &title,
+						Summary: &summary,
+						Text: &text,
+					},
+				})
+			}
 		}()
 		c.String(http.StatusOK, "Payload Received")
 	default:

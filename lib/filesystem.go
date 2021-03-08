@@ -131,7 +131,6 @@ func FindFiles(fs fileSystem, root string, re string) ([]string, error) {
 	if e != nil {
 		return nil, e
 	}
-
 	var files []string
 	e = fs.Walk(root, func(filePath string, info os.FileInfo, err error) error {
 		if err == nil && libRegEx.MatchString(info.Name()) {
