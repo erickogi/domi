@@ -83,6 +83,7 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 			summary := "Please stand by while we scan your repository... :thumbs-up:"
 			text := "Something can go here"
 			if len(foundFiles) > 0 {
+				log.Println("are we in?")
 				githubClient.Checks.CreateCheckRun(ctx, owner, repo, ghclient.CreateCheckRunOptions{
 					Name:	"domi",
 					HeadSHA: sha,
