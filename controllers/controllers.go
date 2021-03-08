@@ -76,26 +76,28 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 			if e != nil {
 				cCopy.Error(e)
 			}
-			status := "queued"
+			detailsURL := "https://example.com"
+			// status := "queued"
 			conclusion := "neutral"
-			startedAt := time.Now()
-			title := "domi - Policy-as-Code Enforcer"
-			summary := "Please stand by while we scan your repository... :thumbs-up:"
-			text := "Something can go here"
+			// startedAt := time.Now()
+			// title := "domi - Policy-as-Code Enforcer"
+			// summary := "Please stand by while we scan your repository... :thumbs-up:"
+			// text := "Something can go here"
 			if len(foundFiles) > 0 {
 				_, _, checkError := githubClient.Checks.CreateCheckRun(ctx, owner, repo, ghclient.CreateCheckRunOptions{
 					Name:	"domi",
 					HeadSHA: sha,
-					Status: &status,
+					DetailsURL: &detailsURL,
+					// Status: &status,
 					Conclusion: &conclusion,
-					StartedAt: &ghclient.Timestamp{
-						Time: startedAt,
-					},
-					Output: &ghclient.CheckRunOutput{
-						Title: &title,
-						Summary: &summary,
-						Text: &text,
-					},
+					// StartedAt: &ghclient.Timestamp{
+					// 	Time: startedAt,
+					// },
+					// Output: &ghclient.CheckRunOutput{
+					// 	Title: &title,
+					// 	Summary: &summary,
+					// 	Text: &text,
+					// },
 				})
 				if checkError != nil {
 					log.Println(checkError)
