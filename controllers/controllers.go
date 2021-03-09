@@ -42,7 +42,7 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 	
 	switch payload.(type) {
 	case github.PushPayload:
-		cCopy := c.Copy()
+		// cCopy := c.Copy()
 		go func() {
 			push := payload.(github.PushPayload)
 			githubProvider.InstallationID = int64(push.Installation.ID)
@@ -51,26 +51,26 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 			sha := push.After
 			githubClient, err := githubProvider.GitHubAuthenticator()
 			if err != nil {
-				log.Panic(errors.New("GitHub Provider Authentication Failed"))
+				log.Println(errors.New("GitHub Provider Authentication Failed"))
 			}
 			log.Println("GitHub Provider Authentication Succeeded")
 			archiveLink, _, err := githubClient.Repositories.GetArchiveLink(ctx, owner, repo, "zipball", &ghclient.RepositoryContentGetOptions{Ref: sha}, true)
 			if err != nil {
-				cCopy.Error(err)
+				log.Println(err)
 			}
 			archiveURL := archiveLink.String()
 			fs := lib.OSFS{}
 			domiID, err := lib.DownloadFile(fs, archiveURL)
 			if err != nil {
-				cCopy.Error(err)
+				log.Println(err)
 			}
 			unzipErr := lib.UnZip(fmt.Sprintf("/tmp/%s.zip", domiID), fmt.Sprintf("/tmp/%s", domiID))
 			if unzipErr != nil {
-				cCopy.Error(err)
+				log.Println(err)
 			}
 			foundFiles, e := lib.FindFiles(fs, fmt.Sprintf("/tmp/%s", domiID), ".*\\.(tf|yaml|yml)")
 			if e != nil {
-				cCopy.Error(e)
+				log.Println(e)
 			}
 			detailsURL := "https://example.com"
 			// status := "queued"
