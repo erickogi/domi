@@ -45,17 +45,13 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 		cCopy := c.Copy()
 		go func() {
 			push := payload.(github.PushPayload)
-			// if check.InstallationID != "" {
-			// 	installationID := check.InstallationID
-			// 	githubProvider.InstallationID = installationID
-			// }
+			githubProvider.InstallationID = int64(push.Installation.ID)
 			owner := push.Repository.Owner.Login
 			repo := push.Repository.Name
 			sha := push.After
 			githubClient, err := githubProvider.GitHubAuthenticator()
 			if err != nil {
-				log.Println("GitHub Provider Authentication Failed")
-				cCopy.Error(errors.New("GitHub Provider Authentication Failed"))
+				log.Panic(errors.New("GitHub Provider Authentication Failed"))
 			}
 			log.Println("GitHub Provider Authentication Succeeded")
 			archiveLink, _, err := githubClient.Repositories.GetArchiveLink(ctx, owner, repo, "zipball", &ghclient.RepositoryContentGetOptions{Ref: sha}, true)
