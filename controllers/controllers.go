@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"context"
+	// "context"
 	"errors"
 	"fmt"
 	"log"
@@ -21,7 +21,7 @@ func CanYouHearMeNow(c *gin.Context) {
 
 // ReceiveGitHubWebHook - Receives and processes GitHub WebHook Events
 func ReceiveGitHubWebHook(c *gin.Context) {
-	ctx := context.Background()
+	// ctx := context.Background()
 	githubProvider, err := lib.NewGitHubProvider()
 	if err != nil {
 		http.Error(c.Writer, "Could not get a provider.", 500)
