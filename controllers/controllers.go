@@ -42,7 +42,7 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 	
 	switch payload.(type) {
 	case github.PushPayload:
-		// cCopy := c.Copy()
+		cCopy := c.Copy()
 		go func() {
 			fmt.Println("ok")
 			push := payload.(github.PushPayload)
@@ -55,7 +55,7 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 				log.Println(errors.New("GitHub Provider Authentication Failed"))
 			}
 			log.Println("GitHub Provider Authentication Succeeded")
-			archiveLink, _, err := githubClient.Repositories.GetArchiveLink(ctx, owner, repo, "zipball", &ghclient.RepositoryContentGetOptions{Ref: sha}, true)
+			archiveLink, _, err := githubClient.Repositories.GetArchiveLink(cCopy, owner, repo, "zipball", &ghclient.RepositoryContentGetOptions{Ref: sha}, true)
 			if err != nil {
 				log.Println(err)
 			}
@@ -81,7 +81,7 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 			// summary := "Please stand by while we scan your repository... :thumbs-up:"
 			// text := "Something can go here"
 			if len(foundFiles) > 0 {
-				_, _, checkError := githubClient.Checks.CreateCheckRun(ctx, owner, repo, ghclient.CreateCheckRunOptions{
+				_, _, checkError := githubClient.Checks.CreateCheckRun(cCopy, owner, repo, ghclient.CreateCheckRunOptions{
 					Name:	"domi",
 					HeadSHA: sha,
 					DetailsURL: &detailsURL,
