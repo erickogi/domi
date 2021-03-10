@@ -11,6 +11,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
 
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\/v/}
+
       - name: Setup Go
         uses: actions/setup-go@v2
         with:
@@ -32,7 +36,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/devops-kung-fu/domi:latest
+          tags: ghcr.io/devops-kung-fu/domi:${{ steps.get_version.outputs.VERSION }}
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}

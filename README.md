@@ -14,6 +14,8 @@ Features:
 
 ## Container Image
 
+ghcr.io/devops-kung-fu/domi@`version`
+
 ## Building from Source
 
 After cloning the repository, utilize make to build the application.  Simply typing _make_ at the command line will display help for the defined targets in the Makefile.
@@ -25,6 +27,8 @@ After cloning the repository, utilize make to build the application.  Simply typ
 | help   | Displays all targets and what they do                   |
 | docker | Builds the docker file                                  |
 | run    | Starts domi locally on the port defined in _config.env_ |
+
+## Environment Variables
 
 ## What's with the name Domi?
 

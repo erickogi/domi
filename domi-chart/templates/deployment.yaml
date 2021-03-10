@@ -30,11 +30,13 @@ spec:
       containers:
         - name: {{ .Chart.Name }}
           env:
-            - name: "GITHUB_ACCESS_TOKEN"
+            - name: "GITHUB_APP_ID"
+              value: "103984"
+            - name: "GITHUB_PRIVATE_KEY"
               valueFrom:
                 secretKeyRef:
-                  name: github-pat
-                  key: github_pat
+                  name: domiapp-pem
+                  key: domiapp.pem
             - name: "GITHUB_WEBHOOK_SECRET"
               valueFrom:
                 secretKeyRef:
