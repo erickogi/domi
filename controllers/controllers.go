@@ -44,6 +44,7 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 	case github.PushPayload:
 		// cCopy := c.Copy()
 		go func() {
+			fmt.Println("ok")
 			push := payload.(github.PushPayload)
 			githubProvider.InstallationID = int64(push.Installation.ID)
 			owner := push.Repository.Owner.Login
