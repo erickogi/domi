@@ -54,7 +54,7 @@ func NewGitHubProvider() (*GitHubProvider, error) {
 func (githubProvider *GitHubProvider) GitHubAuthenticator() (*github.Client, error) {
 	if githubProvider.githubPrivateKey != "" {
 		transport := http.DefaultTransport
-		pemFile, err := os.Create("private-key.pem")
+		pemFile, err := os.Create("/tmp/private-key.pem")
 		if err != nil {
 			log.Println(err)
 			return nil, errors.New("Error creating PEM file")
@@ -71,7 +71,7 @@ func (githubProvider *GitHubProvider) GitHubAuthenticator() (*github.Client, err
         	fmt.Println(err)
         	return nil, errors.New("Error closing PEM file")
     	}
-		itr, err := ghinstallation.NewKeyFromFile(transport, int64(githubProvider.appID), int64(githubProvider.InstallationID), "private-key.pem")
+		itr, err := ghinstallation.NewKeyFromFile(transport, int64(githubProvider.appID), int64(githubProvider.InstallationID), "/tmp/private-key.pem")
 		if err != nil {
 			log.Println(err)
 		}
