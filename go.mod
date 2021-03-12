@@ -1,6 +1,6 @@
 module github.com/devops-kung-fu/domi
 
-go 1.15
+go 1.16
 
 require (
 	github.com/bradleyfalzon/ghinstallation v1.1.1
@@ -19,7 +19,7 @@ require (
 	golang.org/x/net v0.0.0-20210226172049-e18ecbb05110 // indirect
 	golang.org/x/oauth2 v0.0.0-20210311163135-5366d9dc1934
 	golang.org/x/sys v0.0.0-20210309074719-68d13333faf2 // indirect
-	google.golang.org/appengine v1.6.7
+	google.golang.org/appengine v1.6.7 // indirect
 	gopkg.in/go-playground/webhooks.v5 v5.17.0
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
