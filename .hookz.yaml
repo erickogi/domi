@@ -2,4 +2,4 @@ hooks:
   - name: "Go Format"
     type: pre-commit
     exec: go
-    args: ["fmt"]
+    args: ["fmt", "./..."]
