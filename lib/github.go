@@ -41,7 +41,7 @@ func NewGitHubProvider() (*GitHubProvider, error) {
 	gitHubProvider.GithubWebhookSecret = os.Getenv("GITHUB_WEBHOOK_SECRET")
 	if ghPrivateKey != "" {
 		gitHubProvider.githubPrivateKey = ghPrivateKey
-		gitHubProvider.appID = ghAppID
+		gitHubProvider.AppID = ghAppID
 	} else if ghToken != "" {
 		gitHubProvider.githubToken = ghToken
 	} else {
@@ -71,7 +71,7 @@ func (githubProvider *GitHubProvider) GitHubAuthenticator() (*github.Client, err
         	fmt.Println(err)
         	return nil, errors.New("Error closing PEM file")
     	}
-		itr, err := ghinstallation.NewKeyFromFile(transport, int64(githubProvider.appID), int64(githubProvider.InstallationID), "/tmp/private-key.pem")
+		itr, err := ghinstallation.NewKeyFromFile(transport, int64(githubProvider.AppID), int64(githubProvider.InstallationID), "/tmp/private-key.pem")
 		if err != nil {
 			log.Println(err)
 		}
