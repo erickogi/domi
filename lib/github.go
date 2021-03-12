@@ -19,7 +19,7 @@ type GitHubProvider struct {
 	GithubWebhookSecret		string
 	githubToken				string
 	githubPrivateKey		string
-	appID					int
+	AppID					int
 	InstallationID			int64
 	oauthClient				*http.Client
 	appClient				*http.Client

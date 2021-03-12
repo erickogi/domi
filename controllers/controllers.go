@@ -137,7 +137,7 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 		c.String(http.StatusOK, "Push Payload Received")
 	case ghclient.CheckRunEvent:
 		check := payload.(github.CheckRunPayload)
-		if (check.Action == "created" || check.Action == "rerequested") {
+		if (check.Action == "created" && check.CheckRun.App.ID == int64(githubProvider.AppID)) {
 			githubProvider.InstallationID = InstallationID
 			owner := check.Repository.Owner.Login
 			repo := check.Repository.Name
