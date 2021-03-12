@@ -58,19 +58,35 @@ func targetDiscovery(githubClient *ghclient.Client, c *gin.Context, owner string
 }
 
 func updateCheckRun(githubClient *ghclient.Client, c *gin.Context, owner string, repo string, checkRunID int64, status string, conclusion string, completedAt *ghclient.Timestamp, title string, summary string, text string) error {
-	_, _, checkError := githubClient.Checks.UpdateCheckRun(c, owner, repo, checkRunID, ghclient.UpdateCheckRunOptions{
-		Name: "domi - Policy-as-Code Enforcer",
-		Status: &status,
-		Conclusion: &conclusion,
-		CompletedAt: completedAt,
-		Output: &ghclient.CheckRunOutput{
-			Title: &title,
-			Summary: &summary,
-			Text: &text,
-		},
-	})
-	if checkError != nil {
-		return checkError
+	if conclusion != "" {
+		_, _, checkError := githubClient.Checks.UpdateCheckRun(c, owner, repo, checkRunID, ghclient.UpdateCheckRunOptions{
+			Name: "domi - Policy-as-Code Enforcer",
+			Status: &status,
+			Conclusion: &conclusion,
+			CompletedAt: completedAt,
+			Output: &ghclient.CheckRunOutput{
+				Title: &title,
+				Summary: &summary,
+				Text: &text,
+			},
+		})
+		if checkError != nil {
+			return checkError
+		}
+	} else {
+		_, _, checkError := githubClient.Checks.UpdateCheckRun(c, owner, repo, checkRunID, ghclient.UpdateCheckRunOptions{
+			Name: "domi - Policy-as-Code Enforcer",
+			Status: &status,
+			CompletedAt: completedAt,
+			Output: &ghclient.CheckRunOutput{
+				Title: &title,
+				Summary: &summary,
+				Text: &text,
+			},
+		})
+		if checkError != nil {
+			return checkError
+		}
 	}
 	return nil
 }
