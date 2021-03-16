@@ -108,9 +108,10 @@ func downloadPolicyRepo(githubClient *ghclient.Client, c *gin.Context) {
 	}
 	policyRepoRegex := regexp.MustCompile(`https://github.com/(?P<owner>[-_a-zA-Z0-9]*)/(?P<repo>[-_a-zA-Z0-9]*)`)
 	policyRepoMatch := policyRepoRegex.FindAllStringSubmatch(policyRepo, -1)
-	policyRepoNames := policyRepoRegex.SubexpNames()
-	log.Println(policyRepoMatch)
-	log.Println(policyRepoNames)
+	policyRepoOwner := policyRepoMatch[0][1]
+	policyRepoRepo := policyRepoMatch[0][2]
+	log.Println(policyRepoOwner)
+	log.Println(policyRepoRepo)
 }
 
 // ReceiveGitHubWebHook - Receives and processes GitHub WebHook Events
