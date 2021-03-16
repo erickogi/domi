@@ -11,7 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-
+	"strings"
 )
 
 type fileSystem interface {
@@ -36,12 +36,19 @@ type file interface {
 // OSFS implements fileSystem using the local disk.
 type OSFS struct{}
 
+// Open - Open File
 func (OSFS) Open(name string) (file, error)                   				{ return os.Open(name) }
+// Copy - Copy File
 func (OSFS) Copy(dst io.Writer, src io.Reader) (int64, error)				{ return io.Copy(dst, src) }
+// Create - Create File
 func (OSFS) Create(name string) (file, error)								{ return os.Create(name)}
+// Stat - Stat File
 func (OSFS) Stat(name string) (os.FileInfo, error)            				{ return os.Stat(name) }
+// Walk - Walk Path
 func (OSFS) Walk(root string, walkFn filepath.WalkFunc) error 				{ return filepath.Walk(root, walkFn) }
+// ReadFile - Reads a File
 func (OSFS) ReadFile(filename string) ([]byte, error)		  				{ return ioutil.ReadFile(filename) }
+// WriteFile - Writes to a File
 func (OSFS) WriteFile(filename string, data []byte, perm os.FileMode) error { return ioutil.WriteFile(filename, data, perm) }
 
 type mockFS struct{}
@@ -79,6 +86,14 @@ func DownloadFile(fs fileSystem, url string) (string, error) {
 	return thisUUID, nil
 }
 
+func sanitizeExtractPath(filePath string, destination string) error {
+	destpath := filepath.Join(destination, filePath)
+	if !strings.HasPrefix(destpath, destination) {
+		return fmt.Errorf("%s: illegal file path", filePath)
+	}
+	return nil
+}
+
 // UnZip - Extracts a zip archive
 func UnZip(source string, destination string) error {
 	archive, err := zip.OpenReader(source)
@@ -106,6 +121,10 @@ func UnZip(source string, destination string) error {
 		}
 		// otherwise, remove that directory (_not_ including parents)
 		err = os.Remove(path)
+		if err != nil {
+			return err
+		}
+		err = sanitizeExtractPath(file.Name, destination)
 		if err != nil {
 			return err
 		}
