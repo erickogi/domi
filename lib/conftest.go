@@ -1,44 +1,46 @@
 package lib
 
 import (
-	// "os/exec"
+	"encoding/json"
+	"fmt"
+	"log"
+	"os/exec"
 )
 
-// // ConftestResults - Holds conftest results
-// type ConftestResults []struct {
-// 	filename 	string	`json:"filename"`
-// 	successes	int		`json:"successes,omitempty"`
-// 	failures	[]struct {
-// 		msg			string	`json:"msg"`
-// 		metadata	struct {
-// 			details	struct {
+// ConftestResults - Holds conftest results
+type ConftestResults []struct {
+	Filename 	string	`json:"filename"`
+	Successes	int		`json:"successes,omitempty"`
+	Failures	[]struct {
+		Msg			string	`json:"msg"`
+		Metadata	struct {
+			details	struct {
 
-// 			} `json:"metadata,omitempty"`
-// 		} `json:"failures,omitempty"`
-// 	}
-// }
+			}
+		} `json:"metadata,omitempty"`
+	} `json:"failures,omitempty"`
+}
 
 // Scan - Use conftest to Scan discovered files.
-func Scan(policyPaths []string, files []string) {
-	// fs := OSFS{}
-	// policyRepoFile, policyRepoError := DownloadFile(fs, policyRepo)
-	// conftestExec, lookpathErr := exec.LookPath("conftest")
-	// if lookpathErr != nil {
-	// 	return nil, lookpathErr
-	// }
-	var policyPathArguments []string
-	for _, policyPath := range policyPaths {
-		policyPathArguments = append(policyPathArguments, "-p")
-		policyPathArguments = append(policyPathArguments, policyPath)
+func Scan(policyID string, files []string) (ConftestResults, error) {
+	conftestExec, lookpathErr := exec.LookPath("conftest")
+	if lookpathErr != nil {
+		return nil, lookpathErr
 	}
-	// arguments := []string{conftestExec, "test", "--all-namespaces", "-o", "json"}
-	// arguments = append(arguments, policyPathArguments...)
-	// arguments = append(arguments, files...)
-	// for _, file := range files {
-	// 	cmd := &exec.Cmd{
-	// 		Path:	conftestExec,
-	// 		Args:	[]string{conftestExec, "test", "--all-namespaces", "-o", "json"},
-	// 	}
-	// }
-	
+	policyPath := fmt.Sprintf("/tmp/%s/policies", policyID)
+	arguments := []string{conftestExec, "test", "--all-namespaces", "-o", "json", "-p", policyPath}
+	arguments = append(arguments, files...)
+	cmd := &exec.Cmd{
+		Path:	conftestExec,
+		Args:	[]string{conftestExec, "test", "--all-namespaces", "-o", "json"},
+	}
+	var output []byte
+	var outputErr error
+	if output, outputErr = cmd.Output(); outputErr != nil {
+		log.Println(outputErr)
+		return nil, outputErr
+	} 
+	conftestResults := ConftestResults{}
+	json.Unmarshal(output, &conftestResults)
+	return conftestResults, nil
 }

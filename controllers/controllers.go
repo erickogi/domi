@@ -204,7 +204,7 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 			if downloadRepoErr != downloadRepoErr {
 				log.Println(downloadRepoErr)
 			}
-			_, targetsError := targetDiscovery(domiID)
+			targetFiles, targetsError := targetDiscovery(domiID)
 			if targetsError != nil {
 				log.Println(targetsError)
 			}
@@ -212,7 +212,11 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 			if policyRepoIDErr != nil {
 				log.Println(policyRepoIDErr)
 			}
-			log.Println(policyRepoID)
+			scanResults, scanErr := lib.Scan(policyRepoID, targetFiles)
+			if scanErr != nil {
+				log.Println(scanErr)
+			}
+			log.Println(scanResults)
 			completedCheckError := updateCheckRun(githubClient, c, owner, repo, checkRunID, "completed", "neutral", &ghclient.Timestamp{Time: time.Now()}, title, summary, text)
 			if completedCheckError != nil {
 				log.Println(completedCheckError)
