@@ -99,7 +99,7 @@ func updateCheckRun(githubClient *ghclient.Client, c *gin.Context, owner string,
 	return nil
 }
 
-func downloadPolicyRepo(githubClient *ghclient.Client, c *gin.Context) {
+func downloadPolicyRepo(githubClient *ghclient.Client, c *gin.Context) (string, error) {
 	var policyRepo string
 	if os.Getenv("POLICY_REPO") != "" {
 		policyRepo = os.Getenv("POLICY_REPO")
@@ -110,8 +110,11 @@ func downloadPolicyRepo(githubClient *ghclient.Client, c *gin.Context) {
 	policyRepoMatch := policyRepoRegex.FindAllStringSubmatch(policyRepo, -1)
 	policyRepoOwner := policyRepoMatch[0][1]
 	policyRepoRepo := policyRepoMatch[0][2]
-	log.Println(policyRepoOwner)
-	log.Println(policyRepoRepo)
+	policyRepoID, policyRepoIDErr := downloadRepo(githubClient, c, policyRepoOwner, policyRepoRepo, "")
+	if policyRepoIDErr != nil {
+		return "", policyRepoIDErr
+	}
+	return policyRepoID, nil
 }
 
 // ReceiveGitHubWebHook - Receives and processes GitHub WebHook Events
@@ -205,7 +208,11 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 			if targetsError != nil {
 				log.Println(targetsError)
 			}
-			downloadPolicyRepo(githubClient, c)
+			policyRepoID, policyRepoIDErr := downloadPolicyRepo(githubClient, c)
+			if policyRepoIDErr != nil {
+				log.Println(policyRepoIDErr)
+			}
+			log.Println(policyRepoID)
 			completedCheckError := updateCheckRun(githubClient, c, owner, repo, checkRunID, "completed", "neutral", &ghclient.Timestamp{Time: time.Now()}, title, summary, text)
 			if completedCheckError != nil {
 				log.Println(completedCheckError)
