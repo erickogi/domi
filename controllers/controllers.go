@@ -104,7 +104,7 @@ func downloadPolicyRepo(githubClient *ghclient.Client, c *gin.Context) (string, 
 	if os.Getenv("POLICY_REPO") != "" {
 		policyRepo = os.Getenv("POLICY_REPO")
 	} else {
-		policyRepo = "https://github.com/devops-kung-fu/domi-rego"
+		policyRepo = "https://github.com/devops-kung-fu/domi-policies"
 	}
 	policyRepoRegex := regexp.MustCompile(`https://github.com/(?P<owner>[-_a-zA-Z0-9]*)/(?P<repo>[-_a-zA-Z0-9]*)`)
 	policyRepoMatch := policyRepoRegex.FindAllStringSubmatch(policyRepo, -1)
