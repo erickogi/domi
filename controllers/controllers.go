@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"os"
 	"regexp"
-	"strings"
+	// "strings"
 	"time"
 
 	"github.com/devops-kung-fu/domi/lib"
@@ -107,7 +107,7 @@ func downloadPolicyRepo(githubClient *ghclient.Client, c *gin.Context) {
 		policyRepo = "https://github.com/devops-kung-fu/domi-rego"
 	}
 	policyRepoRegex := regexp.MustCompile(`https://github.com/(?P<owner>[-_a-zA-Z0-9]*)/(?P<repo>[-_a-zA-Z0-9]*)`)
-	policyRepoMatch := policyRepoRegex.FindAllStringSubmatch(policyRepo)
+	policyRepoMatch := policyRepoRegex.FindAllStringSubmatch(policyRepo, -1)
 	policyRepoNames := policyRepoRegex.SubexpNames()
 	log.Println(policyRepoMatch)
 	log.Println(policyRepoNames)
