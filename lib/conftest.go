@@ -26,7 +26,7 @@ func Scan(policyID string, files []string) (ConftestResults, error) {
 	if lookpathErr != nil {
 		return nil, lookpathErr
 	}
-	policyPath := fmt.Sprintf("/tmp/%s/policies", policyID)
+	policyPath := fmt.Sprintf("/tmp/%s/policy", policyID)
 	arguments := []string{conftestExec, "test", "--all-namespaces", "-o", "json", "-p", policyPath}
 	arguments = append(arguments, files...)
 	cmd := &exec.Cmd{
