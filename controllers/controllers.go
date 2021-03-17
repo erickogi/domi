@@ -66,7 +66,7 @@ func targetDiscovery(domiID string) ([]string, error) {
 	return foundFiles, nil
 }
 
-func updateCheckRun(githubClient *ghclient.Client, c *gin.Context, owner string, repo string, checkRunID int64, status string, conclusion string, completedAt *ghclient.Timestamp, title string, summary string, text string) error {
+func updateCheckRun(githubClient *ghclient.Client, c *gin.Context, owner string, repo string, checkRunID int64, status string, conclusion string, completedAt *ghclient.Timestamp, title string, summary string) error {
 	if conclusion != "" {
 		_, _, checkError := githubClient.Checks.UpdateCheckRun(c, owner, repo, checkRunID, ghclient.UpdateCheckRunOptions{
 			Name: "domi - Policy-as-Code Enforcer",
@@ -76,7 +76,6 @@ func updateCheckRun(githubClient *ghclient.Client, c *gin.Context, owner string,
 			Output: &ghclient.CheckRunOutput{
 				Title: &title,
 				Summary: &summary,
-				Text: &text,
 			},
 		})
 		if checkError != nil {
@@ -90,7 +89,6 @@ func updateCheckRun(githubClient *ghclient.Client, c *gin.Context, owner string,
 			Output: &ghclient.CheckRunOutput{
 				Title: &title,
 				Summary: &summary,
-				Text: &text,
 			},
 		})
 		if checkError != nil {
@@ -162,7 +160,6 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 		status := "queued"
 		title := "domi - Policy-as-Code Enforcer"
 		summary := "**Status**: Queued"
-		// text := "Something can go here"
 		if len(targets) > 0 {
 			_, _, checkError := githubClient.Checks.CreateCheckRun(c, owner, repo, ghclient.CreateCheckRunOptions{
 				Name: "domi - Policy-as-Code Enforcer",
@@ -174,7 +171,6 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 				Output: &ghclient.CheckRunOutput{
 					Title: &title,
 					Summary: &summary,
-					// Text: &text,
 				},
 			})
 			if checkError != nil {
@@ -196,8 +192,7 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 			}
 			title := "domi - Policy-as-Code Enforcer"
 			summary := "**Status**: Scanning"
-			// text := "Something can go here"
-			inProgressCheckError := updateCheckRun(githubClient, c, owner, repo, checkRunID, "in_progress", "", nil, title, summary, "")
+			inProgressCheckError := updateCheckRun(githubClient, c, owner, repo, checkRunID, "in_progress", "", nil, title, summary)
 			if inProgressCheckError != nil {
 				log.Println(inProgressCheckError)
 			}
@@ -218,7 +213,7 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 				log.Println(scanErr)
 			}
 			scanSummary, scanConclusion := lib.SummaryBuilder(scanResults, scanErr)
-			completedCheckError := updateCheckRun(githubClient, c, owner, repo, checkRunID, "completed", scanConclusion, &ghclient.Timestamp{Time: time.Now()}, title, scanSummary, "")
+			completedCheckError := updateCheckRun(githubClient, c, owner, repo, checkRunID, "completed", scanConclusion, &ghclient.Timestamp{Time: time.Now()}, title, scanSummary)
 			if completedCheckError != nil {
 				log.Println(completedCheckError)
 			}
