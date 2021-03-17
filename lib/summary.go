@@ -10,11 +10,7 @@ func SummaryBuilder(conftestResults ConftestResults, scanErr error) (string, str
 	summaryIntro := `**Status**: Complete`
 	summaryError := ""
 	if scanErr != nil {
-		summaryError = fmt.Sprintf(`**Errors**: 
-		
-<pre>%s</pre>
-
-Are you using a custom policy repository? Check out the domi [Wiki](https://github.com/devops-kung-fu/domi/wiki) for recommendations on creating custom policy repos.\n`, scanErr)
+		summaryError = fmt.Sprintf(`**Errors**: Are you using a custom policy repository? Check out the domi [Wiki](https://github.com/devops-kung-fu/domi/wiki) for recommendations on creating custom policy repos.\n<pre>%s</pre>`, scanErr)
 	}
 	summaryResultsTitle := `---\n# Results`
 	summaryResultsByFile := ""
