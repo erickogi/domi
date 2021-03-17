@@ -14,10 +14,9 @@ func SummaryBuilder(conftestResults ConftestResults, scanErr error) (string, str
 		
 <pre>%s</pre>
 
-Are you using a custom policy repository? Check out the domi [Wiki](https://github.com/devops-kung-fu/domi/wiki) for recommendations on creating custom policy repos.`, scanErr)
+Are you using a custom policy repository? Check out the domi [Wiki](https://github.com/devops-kung-fu/domi/wiki) for recommendations on creating custom policy repos.\n`, scanErr)
 	}
-	summaryResultsTitle := `---
-# Results`
+	summaryResultsTitle := `---\n# Results`
 	summaryResultsByFile := ""
 	conclusion := ""
 	if len(conftestResults) > 0 {
