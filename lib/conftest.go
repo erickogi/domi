@@ -37,7 +37,6 @@ func Scan(policyID string, files []string) (ConftestResults, error) {
 	var output []byte
 	var outputErr error
 	if output, outputErr = cmd.Output(); outputErr != nil {
-		log.Println(outputErr)
 		return nil, outputErr
 	} 
 	conftestResults := ConftestResults{}
