@@ -7,12 +7,12 @@ import (
 
 // SummaryBuilder - Builds the summary for the check run.
 func SummaryBuilder(conftestResults ConftestResults, scanErr error) (string, string) {
-	summaryIntro := `**Status**: Complete`
+	summaryIntro := "**Status**: Complete"
 	summaryError := ""
 	if scanErr != nil {
-		summaryError = fmt.Sprintf(`**Errors**: Are you using a custom policy repository? Check out the domi [Wiki](https://github.com/devops-kung-fu/domi/wiki) for recommendations on creating custom policy repos.\n<pre>%s</pre>`, scanErr)
+		summaryError = fmt.Sprintf("**Errors**: Are you using a custom policy repository? Check out the domi [Wiki](https://github.com/devops-kung-fu/domi/wiki) for recommendations on creating custom policy repos.\n<pre>%s</pre>", scanErr)
 	}
-	summaryResultsTitle := `---\n# Results`
+	summaryResultsTitle := "---\n# Results"
 	summaryResultsByFile := ""
 	conclusion := ""
 	if len(conftestResults) > 0 {
