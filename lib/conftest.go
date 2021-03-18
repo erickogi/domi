@@ -33,7 +33,7 @@ func Scan(fs fileSystem, policyID string, files []string) (ConftestResults, erro
 		return nil, policyPathsError
 	}
 	log.Println(policyPaths)
-	arguments := []string{conftestExec, "test", "--all-namespaces", "-o", "json", "-p", policyPaths[0]}
+	arguments := []string{"test", "--all-namespaces", "-o", "json", "-p", policyPaths[0]}
 	arguments = append(arguments, files...)
 	cmd := &exec.Cmd{
 		Path:	conftestExec,
