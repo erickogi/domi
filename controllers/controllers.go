@@ -208,7 +208,8 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 			if policyRepoIDErr != nil {
 				log.Println(policyRepoIDErr)
 			}
-			scanResults, scanErr := lib.Scan(policyRepoID, targetFiles)
+			fs := lib.OSFS{}
+			scanResults, scanErr := lib.Scan(fs, policyRepoID, targetFiles)
 			if scanErr != nil {
 				log.Println(scanErr)
 			}
