@@ -37,7 +37,7 @@ func Scan(fs fileSystem, policyID string, files []string) (ConftestResults, erro
 	arguments = append(arguments, files...)
 	cmd := &exec.Cmd{
 		Path:	conftestExec,
-		Args:	[]string{conftestExec, "test", "--all-namespaces", "-o", "json"},
+		Args:	arguments,
 	}
 	var output []byte
 	var outputErr error
