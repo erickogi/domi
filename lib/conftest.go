@@ -43,7 +43,8 @@ func Scan(fs fileSystem, policyID string, files []string) (ConftestResults, erro
 	var outputErr error
 	if output, outputErr = cmd.Output(); outputErr != nil {
 		return nil, outputErr
-	} 
+	}
+	log.Println(output)
 	conftestResults := ConftestResults{}
 	json.Unmarshal(output, &conftestResults)
 	return conftestResults, nil

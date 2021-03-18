@@ -2,6 +2,7 @@ package lib
 
 import (
 	"fmt"
+	"log"
 	"os"
 )
 
@@ -15,6 +16,7 @@ func SummaryBuilder(conftestResults ConftestResults, scanErr error) (string, str
 	summaryResultsTitle := "---\n# Results"
 	summaryResultsByFile := ""
 	conclusion := ""
+	log.Println(conftestResults)
 	if len(conftestResults) > 0 {
 		for _, result := range conftestResults {
 			summaryResultsByFile += fmt.Sprintf("*%s*\n", result.Filename)

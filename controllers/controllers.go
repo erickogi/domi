@@ -211,7 +211,7 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 			fs := lib.OSFS{}
 			scanResults, scanErr := lib.Scan(fs, policyRepoID, targetFiles)
 			if scanErr != nil {
-				log.Println(scanErr)
+				log.Println(fmt.Sprintf("Scan Error: %s", scanErr))
 			}
 			scanSummary, scanConclusion := lib.SummaryBuilder(scanResults, scanErr)
 			completedCheckError := updateCheckRun(githubClient, c, owner, repo, checkRunID, "completed", scanConclusion, &ghclient.Timestamp{Time: time.Now()}, title, scanSummary)
