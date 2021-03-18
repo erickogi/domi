@@ -3,6 +3,7 @@ package lib
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os/exec"
 )
 
@@ -21,13 +22,18 @@ type ConftestResults []struct {
 }
 
 // Scan - Use conftest to Scan discovered files.
-func Scan(policyID string, files []string) (ConftestResults, error) {
+func Scan(fs fileSystem, policyID string, files []string) (ConftestResults, error) {
 	conftestExec, lookpathErr := exec.LookPath("conftest")
 	if lookpathErr != nil {
 		return nil, lookpathErr
 	}
-	policyPath := fmt.Sprintf("/tmp/%s/policy", policyID)
-	arguments := []string{conftestExec, "test", "--all-namespaces", "-o", "json", "-p", policyPath}
+	policyIDPath := fmt.Sprintf("/tmp/%s", policyID)
+	policyPaths, policyPathsError := FindFiles(fs, policyIDPath, "policy$")
+	if policyPathsError != nil {
+		return nil, policyPathsError
+	}
+	log.Println(policyPaths)
+	arguments := []string{conftestExec, "test", "--all-namespaces", "-o", "json", "-p", policyPaths[0]}
 	arguments = append(arguments, files...)
 	cmd := &exec.Cmd{
 		Path:	conftestExec,
