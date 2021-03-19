@@ -1,6 +1,6 @@
 # domi
 
-__NOTICE: This documentation and project is under massive development. Consider this volatile__
+__NOTICE: This documentation and project is under ~~massive~~ active development. Consider this ~~volatile~~ pre-alpha.__
 
 ## Overview
 
@@ -8,7 +8,7 @@ Enforces policy in CI/CD pipelines using conftest and Open Policy Agent.
 
 Features:
 
-* Integrates with Github, Bitbucket, Gitlab, and other services via webhooks
+* Integrates with Github, Bitbucket (To Do), Gitlab (To Do), and other services (To Do) via webhooks
 * Supports Policy-as-Code written in rego.
 * May be run against specific repositories without integration to determine policy
 
@@ -23,8 +23,6 @@ After cloning the repository, utilize make to build the application.  Simply typ
 | help   | Displays all targets and what they do                   |
 | docker | Builds the docker file                                  |
 | run    | Starts domi locally on the port defined in _config.env_ |
-
-## Environment Variables
 
 ## What's with the name Domi?
 
