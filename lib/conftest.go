@@ -50,6 +50,7 @@ func Scan(fs fileSystem, policyID string, files []string) (ConftestResults, erro
 	}
 	arguments := []string{"test", "--all-namespaces", "-o", "json", "-p", policyPath}
 	arguments = append(arguments, files...)
+	log.Println(arguments)
 	cmd := &exec.Cmd{
 		Path:	conftestExec,
 		Args:	arguments,
