@@ -57,7 +57,7 @@ func Scan(fs fileSystem, policyID string, files []string) (ConftestResults, erro
 	}
 	var output []byte
 	var outputErr error
-	if output, outputErr = cmd.Output(); outputErr != nil {
+	if output, outputErr = cmd.Output(); outputErr != nil && outputErr.Error() != "exit status 1" && outputErr.Error() != "exit status 2" {
 		return nil, outputErr
 	}
 	log.Println(output)
