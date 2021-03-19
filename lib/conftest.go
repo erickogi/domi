@@ -43,7 +43,7 @@ func Scan(fs fileSystem, policyID string, files []string) (ConftestResults, erro
 	}
 	var policyPath string = ""
 	for _, policyPathCandidate := range policyPaths {
-		if len(strings.Split(policyPathCandidate, "/")) == 4 {
+		if len(strings.Split(policyPathCandidate, "/")) == 5 {
 			policyPath = policyPathCandidate
 			break
 		}
