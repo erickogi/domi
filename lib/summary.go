@@ -19,10 +19,14 @@ func SummaryBuilder(conftestResults ConftestResults, scanErr error) (string, str
 	log.Println(conftestResults)
 	if len(conftestResults) > 0 {
 		for _, result := range conftestResults {
+			if len(result.Failures) == 0 || len(result.Warnings) == 0 {
+				break
+			}
 			summaryResultsByFile += fmt.Sprintf("*%s*\n", result.Filename)
 		}
 		conclusion = "failure"
-	} else {
+	}
+	if summaryResultsByFile == "" {
 		summaryResultsByFile = "No results found. :rocket:"
 		conclusion = "success"
 	}

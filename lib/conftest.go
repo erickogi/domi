@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os/exec"
+	"strings"
 )
 
 // ConftestResults - Holds conftest results
@@ -19,6 +20,14 @@ type ConftestResults []struct {
 			}
 		} `json:"metadata,omitempty"`
 	} `json:"failures,omitempty"`
+	Warnings	[]struct {
+		Msg			string	`json:"msg"`
+		Metadata	struct {
+			details	struct {
+
+			}
+		} `json:"metadata,omitempty"`
+	} `json:"warnings,omitempty"`
 }
 
 // Scan - Use conftest to Scan discovered files.
@@ -32,8 +41,14 @@ func Scan(fs fileSystem, policyID string, files []string) (ConftestResults, erro
 	if policyPathsError != nil {
 		return nil, policyPathsError
 	}
-	log.Println(policyPaths)
-	arguments := []string{"test", "--all-namespaces", "-o", "json", "-p", policyPaths[0]}
+	var policyPath string = ""
+	for policyPathCandidate := range policyPaths {
+		if len(strings.Split(policyPathCandidate, "/")) == 4 {
+			policyPath = policyPathCandidate
+			break
+		}
+	}
+	arguments := []string{"test", "--all-namespaces", "-o", "json", "-p", policyPath}
 	arguments = append(arguments, files...)
 	cmd := &exec.Cmd{
 		Path:	conftestExec,
