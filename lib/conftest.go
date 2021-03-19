@@ -44,13 +44,13 @@ func Scan(fs fileSystem, policyID string, files []string) (ConftestResults, erro
 			break
 		}
 	}
-	cmd := exec.Command("conftest", "test", "--all-namespaces", "-o", "json", "-p", policyPath)
+	cmd := exec.Command("conftest", "test", "--all-namespaces", "--fail-on-warn", "-o", "json", "-p", policyPath)
 	cmd.Args = append(cmd.Args, files...)
 	output, outputErr := cmd.Output()
 	if outputErr != nil {
 		return nil, outputErr
 	}
-	log.Println(output)
+	log.Println(string(output))
 	conftestResults := ConftestResults{}
 	json.Unmarshal(output, &conftestResults)
 	return conftestResults, nil
