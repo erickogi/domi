@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 )
 
 // SummaryBuilder - Builds the summary for the check run.
@@ -20,7 +21,7 @@ func SummaryBuilder(conftestResults ConftestResults) (string, string) {
 	if len(conftestResults) > 0 {
 		for _, result := range conftestResults {
 			if len(result.Failures) > 0 || len(result.Warnings) > 0 {
-				summaryResultsByFile += fmt.Sprintf("*%s*\n", result.Filename)
+				summaryResultsByFile += fmt.Sprintf("**%s**\n", strings.Split(result.Filename, "/")[4:])
 			}
 		}
 		conclusion = "failure"
