@@ -24,7 +24,7 @@ func SummaryBuilder(conftestResults ConftestResults) (string, string) {
 	// }
 	summaryResultsTitle := "---\n# Results"
 	summaryResultsByFile := ""
-	conclusion := ""
+	conclusion := "success"
 	log.Println(conftestResults)
 	if len(conftestResults) > 0 {
 		for _, result := range conftestResults {
@@ -34,20 +34,20 @@ func SummaryBuilder(conftestResults ConftestResults) (string, string) {
 				if len(result.Failures) > 0 {
 					for _, failure := range result.Failures { 
 						summaryResultsByFile += rowBuilder(failure, "Deny")
+						conclusion = "failure"
 					}
 				}
 				if len(result.Warnings) > 0 {
 					for _, warning := range result.Warnings { 
 						summaryResultsByFile += rowBuilder(warning, "Warn")
+
 					}
 				}
 			}
 		}
-		conclusion = "failure"
 	}
 	if summaryResultsByFile == "" {
 		summaryResultsByFile = "No results found. :rocket:"
-		conclusion = "success"
 	}
 	if os.Getenv("AUDIT_MODE") == "1" {
 		conclusion = "neutral"
