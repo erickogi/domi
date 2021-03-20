@@ -19,10 +19,9 @@ func SummaryBuilder(conftestResults ConftestResults) (string, string) {
 	log.Println(conftestResults)
 	if len(conftestResults) > 0 {
 		for _, result := range conftestResults {
-			if len(result.Failures) == 0 || len(result.Warnings) == 0 {
-				break
+			if len(result.Failures) > 0 || len(result.Warnings) > 0 {
+				summaryResultsByFile += fmt.Sprintf("*%s*\n", result.Filename)
 			}
-			summaryResultsByFile += fmt.Sprintf("*%s*\n", result.Filename)
 		}
 		conclusion = "failure"
 	}
