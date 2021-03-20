@@ -17,7 +17,7 @@ func rowBuilder(message struct{Msg string "json:\"msg\""; Metadata struct{detail
 
 // SummaryBuilder - Builds the summary for the check run.
 func SummaryBuilder(conftestResults ConftestResults) (string, string) {
-	summaryIntro := "**Status**: Complete"
+	summaryIntro := "**Status**: Complete\n"
 	// summaryError := ""
 	// if scanErr != nil {
 	// 	summaryError = fmt.Sprintf("**Errors**: Are you using a custom policy repository? Check out the domi [Wiki](https://github.com/devops-kung-fu/domi/wiki) for recommendations on creating custom policy repos.\n<pre>%s</pre>", scanErr)
