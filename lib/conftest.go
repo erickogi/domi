@@ -31,11 +31,11 @@ type ConftestResults []struct {
 }
 
 // Scan - Use conftest to Scan discovered files.
-func Scan(fs fileSystem, policyID string, files []string) (ConftestResults, error) {
+func Scan(fs fileSystem, policyID string, files []string) ConftestResults {
 	policyIDPath := fmt.Sprintf("/tmp/%s", policyID)
 	policyPaths, policyPathsError := FindFiles(fs, policyIDPath, "policy$")
 	if policyPathsError != nil {
-		return nil, policyPathsError
+		return nil
 	}
 	var policyPath string = ""
 	for _, policyPathCandidate := range policyPaths {
@@ -46,12 +46,9 @@ func Scan(fs fileSystem, policyID string, files []string) (ConftestResults, erro
 	}
 	cmd := exec.Command("conftest", "test", "--all-namespaces", "--fail-on-warn", "-o", "json", "-p", policyPath)
 	cmd.Args = append(cmd.Args, files...)
-	output, outputErr := cmd.Output()
-	if outputErr != nil {
-		return nil, outputErr
-	}
+	output, _ := cmd.Output()
 	log.Println(string(output))
 	conftestResults := ConftestResults{}
 	json.Unmarshal(output, &conftestResults)
-	return conftestResults, nil
+	return conftestResults
 }
