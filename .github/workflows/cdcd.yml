@@ -18,7 +18,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v2
         with:
-          go-version: '1.15.8'
+          go-version: '1.16.2'
 
       - name: Build domi Linux amd64
         run: GOOS=linux GOARCH=amd64 go build -o bin/domi github.com/devops-kung-fu/domi

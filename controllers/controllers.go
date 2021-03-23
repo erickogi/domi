@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"regexp"
+	// "strings"
 	"time"
 
 	"github.com/devops-kung-fu/domi/lib"
@@ -32,7 +35,7 @@ func getGitHubClient(githubProvider *lib.GitHubProvider) (*ghclient.Client, erro
 	return githubClient, nil
 }
 
-func targetDiscovery(githubClient *ghclient.Client, c *gin.Context, owner string, repo string, sha string) ([]string, error) {
+func downloadRepo(githubClient *ghclient.Client, c *gin.Context, owner string, repo string, sha string) (string, error) {
 	archiveLink, _, err := githubClient.Repositories.GetArchiveLink(c, owner, repo, "zipball", &ghclient.RepositoryContentGetOptions{Ref: sha}, true)
 	if err != nil {
 		log.Println(err)
@@ -42,13 +45,19 @@ func targetDiscovery(githubClient *ghclient.Client, c *gin.Context, owner string
 	domiID, err := lib.DownloadFile(fs, archiveURL)
 	if err != nil {
 		log.Println(err)
-		return nil, err
+		return "", err
 	}
 	unzipErr := lib.UnZip(fmt.Sprintf("/tmp/%s.zip", domiID), fmt.Sprintf("/tmp/%s", domiID))
 	if unzipErr != nil {
 		log.Println(unzipErr)
-		return nil, unzipErr
+		return "", unzipErr
 	}
+	return domiID, nil
+}
+
+// Move this to lib/filesystem.go
+func targetDiscovery(domiID string) ([]string, error) {
+	fs := lib.OSFS{}
 	foundFiles, e := lib.FindFiles(fs, fmt.Sprintf("/tmp/%s", domiID), ".*\\.(tf|yaml|yml)")
 	if e != nil {
 		log.Println(e)
@@ -57,7 +66,7 @@ func targetDiscovery(githubClient *ghclient.Client, c *gin.Context, owner string
 	return foundFiles, nil
 }
 
-func updateCheckRun(githubClient *ghclient.Client, c *gin.Context, owner string, repo string, checkRunID int64, status string, conclusion string, completedAt *ghclient.Timestamp, title string, summary string, text string) error {
+func updateCheckRun(githubClient *ghclient.Client, c *gin.Context, owner string, repo string, checkRunID int64, status string, conclusion string, completedAt *ghclient.Timestamp, title string, summary string) error {
 	if conclusion != "" {
 		_, _, checkError := githubClient.Checks.UpdateCheckRun(c, owner, repo, checkRunID, ghclient.UpdateCheckRunOptions{
 			Name:        "domi - Policy-as-Code Enforcer",
@@ -67,7 +76,6 @@ func updateCheckRun(githubClient *ghclient.Client, c *gin.Context, owner string,
 			Output: &ghclient.CheckRunOutput{
 				Title:   &title,
 				Summary: &summary,
-				Text:    &text,
 			},
 		})
 		if checkError != nil {
@@ -81,7 +89,6 @@ func updateCheckRun(githubClient *ghclient.Client, c *gin.Context, owner string,
 			Output: &ghclient.CheckRunOutput{
 				Title:   &title,
 				Summary: &summary,
-				Text:    &text,
 			},
 		})
 		if checkError != nil {
@@ -89,6 +96,24 @@ func updateCheckRun(githubClient *ghclient.Client, c *gin.Context, owner string,
 		}
 	}
 	return nil
+}
+
+func downloadPolicyRepo(githubClient *ghclient.Client, c *gin.Context) (string, error) {
+	var policyRepo string
+	if os.Getenv("POLICY_REPO") != "" {
+		policyRepo = os.Getenv("POLICY_REPO")
+	} else {
+		policyRepo = "https://github.com/devops-kung-fu/domi-policies"
+	}
+	policyRepoRegex := regexp.MustCompile(`https://github.com/(?P<owner>[-_a-zA-Z0-9]*)/(?P<repo>[-_a-zA-Z0-9]*)`)
+	policyRepoMatch := policyRepoRegex.FindAllStringSubmatch(policyRepo, -1)
+	policyRepoOwner := policyRepoMatch[0][1]
+	policyRepoRepo := policyRepoMatch[0][2]
+	policyRepoID, policyRepoIDErr := downloadRepo(githubClient, c, policyRepoOwner, policyRepoRepo, "")
+	if policyRepoIDErr != nil {
+		return "", policyRepoIDErr
+	}
+	return policyRepoID, nil
 }
 
 // ReceiveGitHubWebHook - Receives and processes GitHub WebHook Events
@@ -124,14 +149,17 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 		if githubClientError != nil {
 			log.Println(githubClientError)
 		}
-		targets, targetsError := targetDiscovery(githubClient, c, owner, repo, sha)
+		domiID, downloadRepoErr := downloadRepo(githubClient, c, owner, repo, sha)
+		if downloadRepoErr != downloadRepoErr {
+			log.Println(downloadRepoErr)
+		}
+		targets, targetsError := targetDiscovery(domiID)
 		if targetsError != nil {
 			log.Println(targetsError)
 		}
 		status := "queued"
 		title := "domi - Policy-as-Code Enforcer"
-		summary := "Please stand by while we scan your repository... :thumbs-up:"
-		text := "Something can go here"
+		summary := "**Status**: Queued"
 		if len(targets) > 0 {
 			_, _, checkError := githubClient.Checks.CreateCheckRun(c, owner, repo, ghclient.CreateCheckRunOptions{
 				Name:    "domi - Policy-as-Code Enforcer",
@@ -143,7 +171,6 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 				Output: &ghclient.CheckRunOutput{
 					Title:   &title,
 					Summary: &summary,
-					Text:    &text,
 				},
 			})
 			if checkError != nil {
@@ -164,18 +191,27 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 				log.Println(githubClientError)
 			}
 			title := "domi - Policy-as-Code Enforcer"
-			summary := "Thanks for playing... :thumbs-up:"
-			text := "Something can go here"
-			inProgressCheckError := updateCheckRun(githubClient, c, owner, repo, checkRunID, "in_progress", "", nil, title, summary, text)
+			summary := "**Status**: Scanning"
+			inProgressCheckError := updateCheckRun(githubClient, c, owner, repo, checkRunID, "in_progress", "", nil, title, summary)
 			if inProgressCheckError != nil {
 				log.Println(inProgressCheckError)
 			}
-			_, targetsError := targetDiscovery(githubClient, c, owner, repo, sha)
+			domiID, downloadRepoErr := downloadRepo(githubClient, c, owner, repo, sha)
+			if downloadRepoErr != downloadRepoErr {
+				log.Println(downloadRepoErr)
+			}
+			targetFiles, targetsError := targetDiscovery(domiID)
 			if targetsError != nil {
 				log.Println(targetsError)
 			}
-			// *** Conftest Goes Here ***
-			completedCheckError := updateCheckRun(githubClient, c, owner, repo, checkRunID, "completed", "neutral", &ghclient.Timestamp{Time: time.Now()}, title, summary, text)
+			policyRepoID, policyRepoIDErr := downloadPolicyRepo(githubClient, c)
+			if policyRepoIDErr != nil {
+				log.Println(policyRepoIDErr)
+			}
+			fs := lib.OSFS{}
+			scanResults := lib.Scan(fs, policyRepoID, targetFiles)
+			scanSummary, scanConclusion := lib.SummaryBuilder(scanResults)
+			completedCheckError := updateCheckRun(githubClient, c, owner, repo, checkRunID, "completed", scanConclusion, &ghclient.Timestamp{Time: time.Now()}, title, scanSummary)
 			if completedCheckError != nil {
 				log.Println(completedCheckError)
 			}
