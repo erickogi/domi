@@ -8,7 +8,7 @@ image:
   repository: ghcr.io/devops-kung-fu/domi
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 0.0.102
+  tag: 0.0.103
 
 imagePullSecrets: []
 nameOverride: ""
@@ -25,7 +25,7 @@ serviceAccount:
 
 podAnnotations: {}
 
-podSecurityContext: {}
+podSecurityContext:
   fsGroup: 5150
 
 securityContext: {}
