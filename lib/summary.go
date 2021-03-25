@@ -29,7 +29,7 @@ func SummaryBuilder(conftestResults ConftestResults) (string, string) {
 	if len(conftestResults) > 0 {
 		for _, result := range conftestResults {
 			if len(result.Failures) > 0 || len(result.Warnings) > 0 {
-				summaryResultsByFile += fmt.Sprintf("**%s**\n", strings.Join(strings.Split(result.Filename, "/")[4:], "/"))
+				summaryResultsByFile += fmt.Sprintf("\n**%s**\n", strings.Join(strings.Split(result.Filename, "/")[4:], "/"))
 				summaryResultsByFile += "| Policy | Level | Description |\n| ------ | ----- | ----------- |\n"
 				if len(result.Failures) > 0 {
 					for _, failure := range result.Failures { 
