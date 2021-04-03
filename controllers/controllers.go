@@ -36,13 +36,12 @@ func getGitHubClient(githubProvider *lib.GitHubProvider) (*ghclient.Client, erro
 	return githubClient, nil
 }
 
-func downloadRepo(githubClient *ghclient.Client, c *gin.Context, owner string, repo string, sha string) (string, error) {
+func downloadRepo(fs lib.FileSystem, githubClient *ghclient.Client, c *gin.Context, owner string, repo string, sha string) (string, error) {
 	archiveLink, _, err := githubClient.Repositories.GetArchiveLink(c, owner, repo, "zipball", &ghclient.RepositoryContentGetOptions{Ref: sha}, true)
 	if err != nil {
 		log.Println(err)
 	}
 	archiveURL := archiveLink.String()
-	fs := lib.OSFS{}
 	domiID, err := lib.DownloadFile(fs, archiveURL)
 	if err != nil {
 		log.Println(err)
@@ -57,8 +56,7 @@ func downloadRepo(githubClient *ghclient.Client, c *gin.Context, owner string, r
 }
 
 // Move this to lib/filesystem.go
-func targetDiscovery(domiID string) ([]string, error) {
-	fs := lib.OSFS{}
+func targetDiscovery(fs lib.FileSystem, domiID string) ([]string, error) {
 	foundFiles, e := lib.FindFiles(fs, fmt.Sprintf("/domi/%s", domiID), ".*\\.(tf|yaml|yml)")
 	if e != nil {
 		log.Println(e)
@@ -99,7 +97,7 @@ func updateCheckRun(githubClient *ghclient.Client, c *gin.Context, owner string,
 	return nil
 }
 
-func downloadPolicyRepo(githubClient *ghclient.Client, c *gin.Context) (string, error) {
+func downloadPolicyRepo(fs lib.FileSystem, githubClient *ghclient.Client, c *gin.Context) (string, error) {
 	var policyRepo string
 	if os.Getenv("POLICY_REPO") != "" {
 		policyRepo = os.Getenv("POLICY_REPO")
@@ -110,15 +108,28 @@ func downloadPolicyRepo(githubClient *ghclient.Client, c *gin.Context) (string, 
 	policyRepoMatch := policyRepoRegex.FindAllStringSubmatch(policyRepo, -1)
 	policyRepoOwner := policyRepoMatch[0][1]
 	policyRepoRepo := policyRepoMatch[0][2]
-	policyRepoID, policyRepoIDErr := downloadRepo(githubClient, c, policyRepoOwner, policyRepoRepo, "")
+	policyRepoID, policyRepoIDErr := downloadRepo(fs, githubClient, c, policyRepoOwner, policyRepoRepo, "")
 	if policyRepoIDErr != nil {
 		return "", policyRepoIDErr
 	}
 	return policyRepoID, nil
 }
 
+func cleanUp(fs lib.FileSystem, id string) error {
+	idZipError := fs.Remove(fmt.Sprintf("%s.zip", id))
+	if idZipError != nil {
+		return idZipError
+	}
+	idDirError := fs.Remove(id)
+	if idDirError != nil {
+		return idDirError
+	}
+	return nil
+}
+
 // ReceiveGitHubWebHook - Receives and processes GitHub WebHook Events
 func ReceiveGitHubWebHook(c *gin.Context) {
+	fs := lib.OSFS{}
 	// ctx := context.Background()
 	githubProvider, err := lib.NewGitHubProvider()
 	if err != nil {
@@ -150,11 +161,11 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 		if githubClientError != nil {
 			log.Println(githubClientError)
 		}
-		domiID, downloadRepoErr := downloadRepo(githubClient, c, owner, repo, sha)
+		domiID, downloadRepoErr := downloadRepo(fs, githubClient, c, owner, repo, sha)
 		if downloadRepoErr != downloadRepoErr {
 			log.Println(downloadRepoErr)
 		}
-		targets, targetsError := targetDiscovery(domiID)
+		targets, targetsError := targetDiscovery(fs, domiID)
 		if targetsError != nil {
 			log.Println(targetsError)
 		}
@@ -178,6 +189,12 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 				log.Println(checkError)
 			}
 		}
+		cleanUpError := cleanUp(fs, domiID)
+		if cleanUpError != nil {
+			log.Println(cleanUpError)
+		} else {
+			log.Println("Event clean up complete.")
+		}
 		c.String(http.StatusOK, "Push Payload Received")
 	case github.CheckRunPayload:
 		check := payload.(github.CheckRunPayload)
@@ -197,24 +214,35 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 			if inProgressCheckError != nil {
 				log.Println(inProgressCheckError)
 			}
-			domiID, downloadRepoErr := downloadRepo(githubClient, c, owner, repo, sha)
+			domiID, downloadRepoErr := downloadRepo(fs, githubClient, c, owner, repo, sha)
 			if downloadRepoErr != downloadRepoErr {
 				log.Println(downloadRepoErr)
 			}
-			targetFiles, targetsError := targetDiscovery(domiID)
+			targetFiles, targetsError := targetDiscovery(fs, domiID)
 			if targetsError != nil {
 				log.Println(targetsError)
 			}
-			policyRepoID, policyRepoIDErr := downloadPolicyRepo(githubClient, c)
+			policyRepoID, policyRepoIDErr := downloadPolicyRepo(fs, githubClient, c)
 			if policyRepoIDErr != nil {
 				log.Println(policyRepoIDErr)
 			}
-			fs := lib.OSFS{}
 			scanResults := lib.Scan(fs, policyRepoID, targetFiles)
 			scanSummary, scanConclusion := lib.SummaryBuilder(scanResults)
 			completedCheckError := updateCheckRun(githubClient, c, owner, repo, checkRunID, "completed", scanConclusion, &ghclient.Timestamp{Time: time.Now()}, title, scanSummary)
 			if completedCheckError != nil {
 				log.Println(completedCheckError)
+			}
+			cleanUpDomiIDError := cleanUp(fs, domiID)
+			if cleanUpDomiIDError != nil {
+				log.Println(cleanUpDomiIDError)
+			} else {
+				log.Println("domiID clean up complete.")
+			}
+			cleanUpPolicyIDError := cleanUp(fs, policyRepoID)
+			if cleanUpPolicyIDError != nil {
+				log.Println(cleanUpPolicyIDError)
+			} else {
+				log.Println("policyRepoID clean up complete.")
 			}
 		}
 		c.String(http.StatusOK, "Check Run Payload Received")

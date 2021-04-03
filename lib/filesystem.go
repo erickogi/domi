@@ -14,7 +14,8 @@ import (
 	"strings"
 )
 
-type fileSystem interface {
+// FileSystem - Interface
+type FileSystem interface {
 	Open(name string) (File, error)
 	Copy(dst io.Writer, src io.Reader) (int64, error)
 	Create(name string) (File, error)
