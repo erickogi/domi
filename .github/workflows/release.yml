@@ -20,6 +20,6 @@ jobs:
           release_name: Release ${{ github.ref }}
           body: |
             This domi release includes:
-            - Bug fix in summary.go
+            - Clean up files.
           draft: false
           prerelease: false
