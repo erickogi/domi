@@ -120,7 +120,7 @@ func cleanUp(fs lib.FileSystem, id string) error {
 	if idZipError != nil {
 		return idZipError
 	}
-	idDirError := fs.Remove(fmt.Sprintf("/domi/%s", id))
+	idDirError := fs.RemoveAll(fmt.Sprintf("/domi/%s", id))
 	if idDirError != nil {
 		return idDirError
 	}

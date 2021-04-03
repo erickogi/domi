@@ -20,6 +20,7 @@ type FileSystem interface {
 	Copy(dst io.Writer, src io.Reader) (int64, error)
 	Create(name string) (File, error)
 	Remove(name string) error
+	RemoveAll(name string) error
 	Stat(name string) (os.FileInfo, error)
 	Walk(root string, walkFn filepath.WalkFunc) error
 	ReadFile(filename string) ([]byte, error)
@@ -48,8 +49,11 @@ func (OSFS) Copy(dst io.Writer, src io.Reader) (int64, error) { return io.Copy(d
 // Create - Create File
 func (OSFS) Create(name string) (File, error) { return os.Create(name) }
 
-// Remove - Remove File or Directory
+// Remove - Remove File
 func (OSFS) Remove(name string) error { return os.Remove(name) }
+
+// RemoveAll - Remove Directory
+func (OSFS) RemoveAll(name string) error { return os.RemoveAll(name) }
 
 // Stat - Stat File
 func (OSFS) Stat(name string) (os.FileInfo, error) { return os.Stat(name) }
@@ -71,6 +75,7 @@ func (mockFS) Open(name string) (File, error)                                 { 
 func (mockFS) Copy(dst io.Writer, src io.Reader) (int64, error)               { return 100, nil }
 func (mockFS) Create(name string) (File, error)                               { return nil, nil }
 func (mockFS) Remove(name string) error                             		  { return nil }
+func (mockFS) RemoveAll(name string) error                             		  { return nil }
 func (mockFS) Stat(name string) (os.FileInfo, error)                          { return nil, nil }
 func (mockFS) Walk(root string, walkFn filepath.WalkFunc) error               { return nil }
 func (mockFS) ReadFile(filename string) ([]byte, error)                       { return []byte(`Test String`), nil }
