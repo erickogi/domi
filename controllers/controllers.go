@@ -116,11 +116,11 @@ func downloadPolicyRepo(fs lib.FileSystem, githubClient *ghclient.Client, c *gin
 }
 
 func cleanUp(fs lib.FileSystem, id string) error {
-	idZipError := fs.Remove(fmt.Sprintf("%s.zip", id))
+	idZipError := fs.Remove(fmt.Sprintf("/domi/%s.zip", id))
 	if idZipError != nil {
 		return idZipError
 	}
-	idDirError := fs.Remove(id)
+	idDirError := fs.Remove(fmt.Sprintf("/domi/%s", id))
 	if idDirError != nil {
 		return idDirError
 	}
