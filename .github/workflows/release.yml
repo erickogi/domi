@@ -20,6 +20,6 @@ jobs:
           release_name: Release ${{ github.ref }}
           body: |
             This domi release includes:
-            - Clean up files.
+            - Trivy
           draft: false
           prerelease: false

@@ -42,13 +42,13 @@ jobs:
         run: echo ${{ steps.docker_build.outputs.digest }}
 
       - name: Trivy
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.0.8
         with:
           image-ref: ghcr.io/devops-kung-fu/domi:${{ steps.get_version.outputs.VERSION }}
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true
-          severity: 'CRITICAL,HIGH'
+          severity: 'CRITICAL,HIGH,MEDIUM'
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
