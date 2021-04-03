@@ -15,16 +15,17 @@ import (
 )
 
 type fileSystem interface {
-	Open(name string) (file, error)
+	Open(name string) (File, error)
 	Copy(dst io.Writer, src io.Reader) (int64, error)
-	Create(name string) (file, error)
+	Create(name string) (File, error)
 	Stat(name string) (os.FileInfo, error)
 	Walk(root string, walkFn filepath.WalkFunc) error
 	ReadFile(filename string) ([]byte, error)
 	WriteFile(filename string, data []byte, perm os.FileMode) error
 }
 
-type file interface {
+// File interface
+type File interface {
 	io.Closer
 	io.Writer
 	io.Reader
@@ -37,13 +38,13 @@ type file interface {
 type OSFS struct{}
 
 // Open - Open File
-func (OSFS) Open(name string) (file, error) { return os.Open(name) }
+func (OSFS) Open(name string) (File, error) { return os.Open(name) }
 
 // Copy - Copy File
 func (OSFS) Copy(dst io.Writer, src io.Reader) (int64, error) { return io.Copy(dst, src) }
 
 // Create - Create File
-func (OSFS) Create(name string) (file, error) { return os.Create(name) }
+func (OSFS) Create(name string) (File, error) { return os.Create(name) }
 
 // Stat - Stat File
 func (OSFS) Stat(name string) (os.FileInfo, error) { return os.Stat(name) }
@@ -61,9 +62,9 @@ func (OSFS) WriteFile(filename string, data []byte, perm os.FileMode) error {
 
 type mockFS struct{}
 
-func (mockFS) Open(name string) (file, error)                                 { return nil, nil }
+func (mockFS) Open(name string) (File, error)                                 { return nil, nil }
 func (mockFS) Copy(dst io.Writer, src io.Reader) (int64, error)               { return 100, nil }
-func (mockFS) Create(name string) (file, error)                               { return nil, nil }
+func (mockFS) Create(name string) (File, error)                               { return nil, nil }
 func (mockFS) Stat(name string) (os.FileInfo, error)                          { return nil, nil }
 func (mockFS) Walk(root string, walkFn filepath.WalkFunc) error               { return nil }
 func (mockFS) ReadFile(filename string) ([]byte, error)                       { return []byte(`Test String`), nil }
