@@ -77,7 +77,7 @@ func (mockFS) ReadFile(filename string) ([]byte, error)                       { 
 func (mockFS) WriteFile(filename string, data []byte, perm os.FileMode) error { return nil }
 
 // DownloadFile - Download a file from a URL
-func DownloadFile(fs fileSystem, url string) (string, error) {
+func DownloadFile(fs FileSystem, url string) (string, error) {
 	response, err := http.Get(url)
 	if err != nil {
 		return "", err
@@ -160,7 +160,7 @@ func UnZip(source string, destination string) error {
 }
 
 // FindFiles - Recursively search for files matching a pattern.
-func FindFiles(fs fileSystem, root string, re string) ([]string, error) {
+func FindFiles(fs FileSystem, root string, re string) ([]string, error) {
 	libRegEx, e := regexp.Compile(re)
 	if e != nil {
 		return nil, e
