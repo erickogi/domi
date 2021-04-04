@@ -1,0 +1,26 @@
+package lib
+
+import (
+	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+)
+
+func TestDownloadFile(t *testing.T) {
+	want := "Success!"
+	fs := mockFS{}
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(200)
+		w.Write([]byte(want))
+	}))	
+	client := &HTTPClient{
+		Client: srv.Client(),
+		URL: srv.URL,
+	}
+	result, resultError := client.DownloadFile(fs)
+	if resultError != nil {
+		t.Error()
+	}
+	fmt.Println(result)
+}

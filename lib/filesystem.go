@@ -73,7 +73,7 @@ type mockFS struct{}
 
 func (mockFS) Open(name string) (File, error)                                 { return nil, nil }
 func (mockFS) Copy(dst io.Writer, src io.Reader) (int64, error)               { return 100, nil }
-func (mockFS) Create(name string) (File, error)                               { return nil, nil }
+func (mockFS) Create(name string) (File, error)                               { return os.NewFile(0, "fake"), nil }
 func (mockFS) Remove(name string) error                             		  { return nil }
 func (mockFS) RemoveAll(name string) error                             		  { return nil }
 func (mockFS) Stat(name string) (os.FileInfo, error)                          { return nil, nil }
@@ -81,9 +81,15 @@ func (mockFS) Walk(root string, walkFn filepath.WalkFunc) error               { 
 func (mockFS) ReadFile(filename string) ([]byte, error)                       { return []byte(`Test String`), nil }
 func (mockFS) WriteFile(filename string, data []byte, perm os.FileMode) error { return nil }
 
+// HTTPClient - HTTP Client
+type HTTPClient struct {
+	Client	*http.Client
+	URL string
+}
+
 // DownloadFile - Download a file from a URL
-func DownloadFile(fs FileSystem, url string) (string, error) {
-	response, err := http.Get(url)
+func (c *HTTPClient) DownloadFile(fs FileSystem) (string, error) {
+	response, err := c.Client.Get(c.URL)
 	if err != nil {
 		return "", err
 	}
@@ -102,7 +108,7 @@ func DownloadFile(fs FileSystem, url string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	log.Printf("Downloaded %s as %s\n", url, fileName)
+	log.Printf("Downloaded %s as %s\n", c.URL, fileName)
 	return thisUUID, nil
 }
 
