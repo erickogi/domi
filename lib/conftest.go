@@ -27,7 +27,7 @@ type ConftestResults []struct {
 }
 
 // Scan - Use conftest to Scan discovered files.
-func Scan(fs fileSystem, policyID string, files []string) ConftestResults {
+func Scan(fs FileSystem, policyID string, files []string) ConftestResults {
 	policyIDPath := fmt.Sprintf("/domi/%s", policyID)
 	policyPaths, policyPathsError := FindFiles(fs, policyIDPath, "policy$")
 	if policyPathsError != nil {
