@@ -1,7 +1,6 @@
 package lib
 
 import (
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -18,9 +17,8 @@ func TestDownloadFile(t *testing.T) {
 		Client: srv.Client(),
 		URL: srv.URL,
 	}
-	result, resultError := client.DownloadFile(fs)
+	_, resultError := client.DownloadFile(fs)
 	if resultError != nil {
 		t.Error()
 	}
-	fmt.Println(result)
 }
