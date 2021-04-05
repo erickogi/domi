@@ -48,6 +48,14 @@ func TestRemoveAll(t *testing.T) {
 	}
 }
 
+func TestStat(t *testing.T) {
+	fs := mockFS{}
+	_, err := fs.Stat("fake.file")
+	if err != nil {
+		t.Error()
+	}
+}
+
 func TestDownloadFile(t *testing.T) {
 	want := "Success!"
 	fs := mockFS{}
