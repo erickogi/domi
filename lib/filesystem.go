@@ -86,7 +86,7 @@ func (mockFS) Stat(name string) (os.FileInfo, error)                          { 
 func (mockFS) Walk(root string, walkFn filepath.WalkFunc) error               { return nil }
 func (mockFS) ReadFile(filename string) ([]byte, error)                       { return []byte(`Test String`), nil }
 func (mockFS) WriteFile(filename string, data []byte, perm os.FileMode) error { return nil }
-func (mockFS) NewFile(fd uintptr, name string) File							  { return os.NewFile(fd, name) }
+func (mockFS) NewFile(fd uintptr, name string) File							  { return nil }
 
 // HTTPClient - HTTP Client
 type HTTPClient struct {

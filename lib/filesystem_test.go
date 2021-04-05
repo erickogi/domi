@@ -3,6 +3,7 @@ package lib
 import (
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 )
 
@@ -52,6 +53,40 @@ func TestStat(t *testing.T) {
 	fs := mockFS{}
 	_, err := fs.Stat("fake.file")
 	if err != nil {
+		t.Error()
+	}
+}
+
+func TestWalk(t *testing.T) {
+	fs := mockFS{}
+	err := fs.Walk("fakeDir/", func(filePath string, info os.FileInfo, err error) error {
+		return nil
+	})
+	if err != nil {
+		t.Error()
+	}
+}
+
+func TestReadFile(t *testing.T) {
+	fs := mockFS{}
+	_, err := fs.ReadFile("fake.file")
+	if err != nil {
+		t.Error()
+	}
+}
+
+func TestWriteFile(t *testing.T) {
+	fs := mockFS{}
+	err := fs.WriteFile("fake.file", []byte("Test"), 0644)
+	if err != nil {
+		t.Error()
+	}
+}
+
+func TestNewFile(t *testing.T) {
+	fs := mockFS{}
+	result := fs.NewFile(0, "fake.file")
+	if result != nil {
 		t.Error()
 	}
 }
