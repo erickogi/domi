@@ -42,10 +42,7 @@ func downloadRepo(fs lib.FileSystem, githubClient *ghclient.Client, c *gin.Conte
 		log.Println(err)
 	}
 	archiveURL := archiveLink.String()
-	client := &lib.HTTPClient{
-		Client: *http.Client,
-		URL: archiveURL,
-	}
+	client := lib.NewHTTPClient(http.DefaultClient, archiveURL)
 	domiID, err := client.DownloadFile(fs)
 	if err != nil {
 		log.Println(err)

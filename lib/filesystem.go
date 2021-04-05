@@ -87,6 +87,14 @@ type HTTPClient struct {
 	URL string
 }
 
+// NewHTTPClient - Returns new HTTPClient
+func NewHTTPClient(http *http.Client, url string) *HTTPClient {
+	return &HTTPClient{
+		Client: http,
+		URL: url,
+	}
+}
+
 // DownloadFile - Download a file from a URL
 func (c *HTTPClient) DownloadFile(fs FileSystem) (string, error) {
 	response, err := c.Client.Get(c.URL)
