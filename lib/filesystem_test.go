@@ -8,8 +8,26 @@ import (
 
 func TestOpen(t *testing.T) {
 	fs := mockFS{}
-	_, error := fs.Open("fake.file")
-	if error != nil {
+	_, err := fs.Open("fake.file")
+	if err != nil {
+		t.Error()
+	}
+}
+
+func TestCopy(t *testing.T) {
+	fs := mockFS{}
+	dstFile := fs.NewFile(0, "dstFile")
+	srcFile := fs.NewFile(0, "srcFile")
+	_, err := fs.Copy(dstFile, srcFile)
+	if err != nil {
+		t.Error()
+	}
+}
+
+func TestCreate(t *testing.T) {
+	fs := mockFS{}
+	_, err := fs.Create("fake.file")
+	if err != nil {
 		t.Error()
 	}
 }

@@ -25,6 +25,7 @@ type FileSystem interface {
 	Walk(root string, walkFn filepath.WalkFunc) error
 	ReadFile(filename string) ([]byte, error)
 	WriteFile(filename string, data []byte, perm os.FileMode) error
+	NewFile(fd uintptr, name string) File
 }
 
 // File interface
@@ -69,6 +70,11 @@ func (OSFS) WriteFile(filename string, data []byte, perm os.FileMode) error {
 	return ioutil.WriteFile(filename, data, perm)
 }
 
+// NewFile - Creates a new File
+func (OSFS) NewFile(fd uintptr, name string) File {
+	return os.NewFile(fd, name)
+}
+
 type mockFS struct{}
 
 func (mockFS) Open(name string) (File, error)                                 { return nil, nil }
@@ -80,6 +86,7 @@ func (mockFS) Stat(name string) (os.FileInfo, error)                          { 
 func (mockFS) Walk(root string, walkFn filepath.WalkFunc) error               { return nil }
 func (mockFS) ReadFile(filename string) ([]byte, error)                       { return []byte(`Test String`), nil }
 func (mockFS) WriteFile(filename string, data []byte, perm os.FileMode) error { return nil }
+func (mockFS) NewFile(fd uintptr, name string) File							  { return os.NewFile(fd, name) }
 
 // HTTPClient - HTTP Client
 type HTTPClient struct {
