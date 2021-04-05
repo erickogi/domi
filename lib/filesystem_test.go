@@ -40,6 +40,14 @@ func TestRemove(t *testing.T) {
 	}
 }
 
+func TestRemoveAll(t *testing.T) {
+	fs := mockFS{}
+	err := fs.RemoveAll("fakeDir")
+	if err != nil {
+		t.Error()
+	}
+}
+
 func TestDownloadFile(t *testing.T) {
 	want := "Success!"
 	fs := mockFS{}
