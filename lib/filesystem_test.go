@@ -105,3 +105,17 @@ func TestDownloadFile(t *testing.T) {
 		t.Error()
 	}
 }
+
+func TestSanitizeExtractPathPass(t *testing.T) {
+	err := sanitizeExtractPath("fake.file", "fakePath")
+	if err != nil {
+		t.Error()
+	}
+}
+
+func TestSanitizeExtractPathFail(t *testing.T) {
+	err := sanitizeExtractPath("../../fake.file", "fakePath")
+	if err == nil {
+		t.Error()
+	}
+}
