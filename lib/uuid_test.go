@@ -1,8 +1,8 @@
 package lib
 
 import (
-	"testing"
 	"regexp"
+	"testing"
 )
 
 func TestGetUUID(t *testing.T) {

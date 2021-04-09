@@ -1,8 +1,8 @@
 package routes
 
 import (
-	"testing"
 	"github.com/gin-gonic/gin"
+	"testing"
 )
 
 func TestSetupRouter(t *testing.T) {

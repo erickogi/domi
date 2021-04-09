@@ -80,25 +80,25 @@ type mockFS struct{}
 func (mockFS) Open(name string) (File, error)                                 { return nil, nil }
 func (mockFS) Copy(dst io.Writer, src io.Reader) (int64, error)               { return 100, nil }
 func (mockFS) Create(name string) (File, error)                               { return os.NewFile(0, "fake"), nil }
-func (mockFS) Remove(name string) error                             		  { return nil }
-func (mockFS) RemoveAll(name string) error                             		  { return nil }
+func (mockFS) Remove(name string) error                                       { return nil }
+func (mockFS) RemoveAll(name string) error                                    { return nil }
 func (mockFS) Stat(name string) (os.FileInfo, error)                          { return nil, nil }
 func (mockFS) Walk(root string, walkFn filepath.WalkFunc) error               { return nil }
 func (mockFS) ReadFile(filename string) ([]byte, error)                       { return []byte(`Test String`), nil }
 func (mockFS) WriteFile(filename string, data []byte, perm os.FileMode) error { return nil }
-func (mockFS) NewFile(fd uintptr, name string) File							  { return nil }
+func (mockFS) NewFile(fd uintptr, name string) File                           { return nil }
 
 // HTTPClient - HTTP Client
 type HTTPClient struct {
-	Client	*http.Client
-	URL string
+	Client *http.Client
+	URL    string
 }
 
 // NewHTTPClient - Returns new HTTPClient
 func NewHTTPClient(http *http.Client, url string) *HTTPClient {
 	return &HTTPClient{
 		Client: http,
-		URL: url,
+		URL:    url,
 	}
 }
 
