@@ -7,10 +7,32 @@ import (
 	"testing"
 )
 
+func TestOpenOS(t *testing.T) {
+	fs := OSFS{}
+	_, err := fs.Open("../__testdata__/test.txt")
+	if err != nil {
+		t.Error()
+	}
+}
+
 func TestOpen(t *testing.T) {
 	fs := mockFS{}
 	_, err := fs.Open("fake.file")
 	if err != nil {
+		t.Error()
+	}
+}
+
+func TestCopyOS(t *testing.T) {
+	fs := OSFS{}
+	dstFile, _ := fs.Create("../__testdata__/test1.txt")
+	srcFile, _ := fs.Open("../__testdata__/test.txt")
+	_, errCopy := fs.Copy(dstFile, srcFile)
+	if errCopy != nil {
+		t.Error()
+	}
+	errRemove := fs.Remove("../__testdata__/test1.txt")
+	if errRemove != nil {
 		t.Error()
 	}
 }
