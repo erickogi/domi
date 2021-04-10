@@ -12,6 +12,7 @@ import (
 	// "strings"
 	"time"
 
+	"github.com/devops-kung-fu/domi/integrations"
 	"github.com/devops-kung-fu/domi/lib"
 	"github.com/gin-gonic/gin"
 	ghclient "github.com/google/go-github/v33/github"
@@ -26,7 +27,7 @@ func CanYouHearMeNow(c *gin.Context) {
 	c.Status(200)
 }
 
-func getGitHubClient(githubProvider *lib.GitHubProvider) (*ghclient.Client, error) {
+func getGitHubClient(githubProvider *integrations.GitHubProvider) (*ghclient.Client, error) {
 	githubClient, err := githubProvider.GitHubAuthenticator()
 	if err != nil {
 		log.Println(errors.New("GitHub Provider Authentication Failed"))
@@ -132,7 +133,7 @@ func cleanUp(fs lib.FileSystem, id string) error {
 func ReceiveGitHubWebHook(c *gin.Context) {
 	fs := lib.OSFS{}
 	// ctx := context.Background()
-	githubProvider, err := lib.NewGitHubProvider()
+	githubProvider, err := integrations.NewGitHubProvider()
 	if err != nil {
 		http.Error(c.Writer, "Could not get a provider.", 500)
 		return
