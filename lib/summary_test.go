@@ -2,6 +2,7 @@ package lib
 
 import (
 	// "fmt"
+	"os"
 	"testing"
 )
 
@@ -48,6 +49,7 @@ func TestSummaryBuilder(t *testing.T) {
 			},
 		},
 	}
+	os.Setenv("AUDIT_MODE", "0")
 	summary, conclusion := SummaryBuilder(conftestResults)
 	if summary == "" {
 		t.Error()
@@ -55,4 +57,23 @@ func TestSummaryBuilder(t *testing.T) {
 	if conclusion != "failure" {
 		t.Error()
 	}
+	os.Setenv("AUDIT_MODE", "")
+}
+
+func TestSummaryBuilderSuccessNeutral(t *testing.T) {
+	conftestResults := ConftestResults{
+		{
+			Filename:  "/tmp/deadebeef-dead-beef-dead-beefdeadbeef/repo-being-scanned/fake.file",
+			Successes: 124,
+		},
+	}
+	os.Setenv("AUDIT_MODE", "1")
+	summary, conclusion := SummaryBuilder(conftestResults)
+	if summary == "" {
+		t.Error()
+	}
+	if conclusion != "neutral" {
+		t.Error()
+	}
+	os.Setenv("AUDIT_MODE", "")
 }
