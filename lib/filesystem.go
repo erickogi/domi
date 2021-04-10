@@ -2,12 +2,10 @@ package lib
 
 import (
 	"archive/zip"
-	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
-	"net/http"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -87,45 +85,6 @@ func (mockFS) Walk(root string, walkFn filepath.WalkFunc) error               { 
 func (mockFS) ReadFile(filename string) ([]byte, error)                       { return []byte(`Test String`), nil }
 func (mockFS) WriteFile(filename string, data []byte, perm os.FileMode) error { return nil }
 func (mockFS) NewFile(fd uintptr, name string) File                           { return nil }
-
-// HTTPClient - HTTP Client
-type HTTPClient struct {
-	Client *http.Client
-	URL    string
-}
-
-// NewHTTPClient - Returns new HTTPClient
-func NewHTTPClient(http *http.Client, url string) *HTTPClient {
-	return &HTTPClient{
-		Client: http,
-		URL:    url,
-	}
-}
-
-// DownloadFile - Download a file from a URL
-func (c *HTTPClient) DownloadFile(fs FileSystem) (string, error) {
-	response, err := c.Client.Get(c.URL)
-	if err != nil {
-		return "", err
-	}
-	defer response.Body.Close()
-	if response.StatusCode != 200 {
-		return "", errors.New("Received non 200 response code")
-	}
-	thisUUID := getUUID()
-	fileName := fmt.Sprintf("/domi/%s.zip", thisUUID)
-	file, err := fs.Create(fileName)
-	if err != nil {
-		return "", err
-	}
-	defer file.Close()
-	_, err = fs.Copy(file, response.Body)
-	if err != nil {
-		return "", err
-	}
-	log.Printf("Downloaded %s as %s\n", c.URL, fileName)
-	return thisUUID, nil
-}
 
 func sanitizeExtractPath(filePath string, destination string) error {
 	destpath := filepath.Join(destination, filePath)
