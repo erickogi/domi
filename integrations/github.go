@@ -46,9 +46,9 @@ func NewGitHubProvider() (*GitHubProvider, error) {
 }
 
 // GitHubAuthenticator - Authenticates Personal Access Token
-func (githubProvider *GitHubProvider) GitHubAuthenticator() (*github.Client, error) {
+func (githubProvider *GitHubProvider) GitHubAuthenticator(rootPath string) (*github.Client, error) {
 	transport := http.DefaultTransport
-	pemFile, err := os.Create("/domi/private-key.pem")
+	pemFile, err := os.Create(fmt.Sprintf("%s/private-key.pem", rootPath))
 	if err != nil {
 		log.Println(err)
 		return nil, errors.New("Error creating PEM file")

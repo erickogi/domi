@@ -26,3 +26,17 @@ func TestNewGitHubProviderEmptyEnvVar(t *testing.T) {
 		t.Log()
 	}
 }
+
+func TestGithubAuthenticator(t *testing.T) {
+	os.Setenv("GITHUB_APP_ID", "1")
+	os.Setenv("GITHUB_WEBHOOK_SECRET", "okay")
+	os.Setenv("GITHUB_PRIVATE_KEY", "okay")
+	githubProvider, githubProviderErr := NewGitHubProvider()
+	if githubProviderErr != nil {
+		t.Error()
+	}
+	_, err := githubProvider.GitHubAuthenticator("../__testdata__")
+	if err != nil {
+		t.Error()
+	}
+}

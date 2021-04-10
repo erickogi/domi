@@ -28,7 +28,7 @@ func CanYouHearMeNow(c *gin.Context) {
 }
 
 func getGitHubClient(githubProvider *integrations.GitHubProvider) (*ghclient.Client, error) {
-	githubClient, err := githubProvider.GitHubAuthenticator()
+	githubClient, err := githubProvider.GitHubAuthenticator("/domi")
 	if err != nil {
 		log.Println(errors.New("GitHub Provider Authentication Failed"))
 		return nil, err
