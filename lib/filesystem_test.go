@@ -143,6 +143,14 @@ func TestWriteFile(t *testing.T) {
 	}
 }
 
+func TestNewFileOS(t *testing.T) {
+	fs := OSFS{}
+	result := fs.NewFile(13337, "../__testdata__/test1.txt")
+	if result == nil {
+		t.Error()
+	}
+}
+
 func TestNewFile(t *testing.T) {
 	fs := mockFS{}
 	result := fs.NewFile(0, "fake.file")
