@@ -71,6 +71,14 @@ func TestRemoveAll(t *testing.T) {
 	}
 }
 
+func TestStatOS(t *testing.T) {
+	fs := mockFS{}
+	_, err := fs.Stat("../__testdata__/test.txt")
+	if err != nil {
+		t.Error()
+	}
+}
+
 func TestStat(t *testing.T) {
 	fs := mockFS{}
 	_, err := fs.Stat("fake.file")
