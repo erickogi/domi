@@ -107,6 +107,14 @@ func TestWalk(t *testing.T) {
 	}
 }
 
+func TestReadFileOS(t *testing.T) {
+	fs := OSFS{}
+	_, err := fs.ReadFile("../__testdata__/test.txt")
+	if err != nil {
+		t.Error()
+	}
+}
+
 func TestReadFile(t *testing.T) {
 	fs := mockFS{}
 	_, err := fs.ReadFile("fake.file")
