@@ -1,7 +1,7 @@
 package lib
 
 import (
-	"fmt"
+	// "fmt"
 	"testing"
 )
 
@@ -18,7 +18,7 @@ func TestRowBuilder(t *testing.T) {
 func TestSummaryBuilder(t *testing.T) {
 	conftestResults := ConftestResults{
 		{
-			Filename:  "/tmp/domiIDDir/fake.file",
+			Filename:  "/tmp/deadebeef-dead-beef-dead-beefdeadbeef/repo-being-scanned/fake.file",
 			Successes: 124,
 			Failures: []struct {
 				Msg      string `json:"msg"`
@@ -49,6 +49,10 @@ func TestSummaryBuilder(t *testing.T) {
 		},
 	}
 	summary, conclusion := SummaryBuilder(conftestResults)
-	fmt.Println(summary)
-	fmt.Println(conclusion)
+	if summary == "" {
+		t.Error()
+	}
+	if conclusion != "failure" {
+		t.Error()
+	}
 }
