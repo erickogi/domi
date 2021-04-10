@@ -123,6 +123,18 @@ func TestReadFile(t *testing.T) {
 	}
 }
 
+func TestWriteFileOS(t *testing.T) {
+	fs := OSFS{}
+	errWrite := fs.WriteFile("../__testdata__/test1.txt", []byte("Test"), 0644)
+	if errWrite != nil {
+		t.Error()
+	}
+	errRemove := fs.Remove("../__testdata__/test1.txt")
+	if errRemove != nil {
+		t.Error()
+	}
+}
+
 func TestWriteFile(t *testing.T) {
 	fs := mockFS{}
 	err := fs.WriteFile("fake.file", []byte("Test"), 0644)
