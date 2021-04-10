@@ -72,7 +72,7 @@ func TestRemoveAll(t *testing.T) {
 }
 
 func TestStatOS(t *testing.T) {
-	fs := mockFS{}
+	fs := OSFS{}
 	_, err := fs.Stat("../__testdata__/test.txt")
 	if err != nil {
 		t.Error()
