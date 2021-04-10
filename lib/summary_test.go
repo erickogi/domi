@@ -18,7 +18,7 @@ func TestRowBuilder(t *testing.T) {
 func TestSummaryBuilder(t *testing.T) {
 	conftestResults := ConftestResults{
 		{
-			Filename:  "fake.file",
+			Filename:  "/tmp/domiIDDir/fake.file",
 			Successes: 124,
 			Failures: []struct {
 				Msg      string `json:"msg"`
