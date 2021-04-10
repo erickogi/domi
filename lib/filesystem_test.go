@@ -141,3 +141,12 @@ func TestSanitizeExtractPathFail(t *testing.T) {
 		t.Error()
 	}
 }
+
+func TestUnZip(t *testing.T) {
+	fs := OSFS{}
+	err := UnZip("../__testdata__/test.zip", "../__testdata__/test-zip")
+	if err != nil {
+		t.Error()
+	}
+	fs.RemoveAll("../__testdata__/test-zip")
+}
