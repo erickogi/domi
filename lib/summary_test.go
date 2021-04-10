@@ -16,7 +16,7 @@ func TestRowBuilder(t *testing.T) {
 }
 
 func TestSummaryBuilder(t *testing.T) {
-	conftestResults := &ConftestResults{
+	conftestResults := ConftestResults{
 		{
 			Filename:  "fake.file",
 			Successes: 124,
