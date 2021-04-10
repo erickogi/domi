@@ -196,3 +196,14 @@ func TestUnZip(t *testing.T) {
 	}
 	fs.RemoveAll("../__testdata__/test-zip")
 }
+
+func TestFindFiles(t *testing.T) {
+	fs := OSFS{}
+	files, err := FindFiles(fs, "../__testdata__", "(.*)\\.txt")
+	if len(files) != 1 {
+		t.Error()
+	}
+	if err != nil {
+		t.Error()
+	}
+}
