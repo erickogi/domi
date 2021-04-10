@@ -87,6 +87,16 @@ func TestStat(t *testing.T) {
 	}
 }
 
+func TestWalkOS(t *testing.T) {
+	fs := OSFS{}
+	err := fs.Walk("../__testdata__/", func(filePath string, info os.FileInfo, err error) error {
+		return nil
+	})
+	if err != nil {
+		t.Error()
+	}
+}
+
 func TestWalk(t *testing.T) {
 	fs := mockFS{}
 	err := fs.Walk("fakeDir/", func(filePath string, info os.FileInfo, err error) error {
