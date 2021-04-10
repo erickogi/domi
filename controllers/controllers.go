@@ -193,8 +193,6 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 		cleanUpError := cleanUp(fs, domiID)
 		if cleanUpError != nil {
 			log.Println(cleanUpError)
-		} else {
-			log.Println("Event clean up complete.")
 		}
 		c.String(http.StatusOK, "Push Payload Received")
 	case github.CheckRunPayload:
@@ -236,14 +234,10 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 			cleanUpDomiIDError := cleanUp(fs, domiID)
 			if cleanUpDomiIDError != nil {
 				log.Println(cleanUpDomiIDError)
-			} else {
-				log.Println("domiID clean up complete.")
 			}
 			cleanUpPolicyIDError := cleanUp(fs, policyRepoID)
 			if cleanUpPolicyIDError != nil {
 				log.Println(cleanUpPolicyIDError)
-			} else {
-				log.Println("policyRepoID clean up complete.")
 			}
 		}
 		c.String(http.StatusOK, "Check Run Payload Received")
