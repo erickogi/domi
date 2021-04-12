@@ -12,6 +12,7 @@ import (
 	// "strings"
 	"time"
 
+	"github.com/devops-kung-fu/domi/integrations"
 	"github.com/devops-kung-fu/domi/lib"
 	"github.com/gin-gonic/gin"
 	ghclient "github.com/google/go-github/v33/github"
@@ -26,8 +27,8 @@ func CanYouHearMeNow(c *gin.Context) {
 	c.Status(200)
 }
 
-func getGitHubClient(githubProvider *lib.GitHubProvider) (*ghclient.Client, error) {
-	githubClient, err := githubProvider.GitHubAuthenticator()
+func getGitHubClient(githubProvider *integrations.GitHubProvider) (*ghclient.Client, error) {
+	githubClient, err := githubProvider.GitHubAuthenticator("/domi")
 	if err != nil {
 		log.Println(errors.New("GitHub Provider Authentication Failed"))
 		return nil, err
@@ -42,7 +43,8 @@ func downloadRepo(fs lib.FileSystem, githubClient *ghclient.Client, c *gin.Conte
 		log.Println(err)
 	}
 	archiveURL := archiveLink.String()
-	domiID, err := lib.DownloadFile(fs, archiveURL)
+	client := lib.NewHTTPClient(http.DefaultClient, archiveURL)
+	domiID, err := client.DownloadFile(fs)
 	if err != nil {
 		log.Println(err)
 		return "", err
@@ -127,11 +129,23 @@ func cleanUp(fs lib.FileSystem, id string) error {
 	return nil
 }
 
+func downloadAndDiscover(fs lib.FileSystem, githubClient *ghclient.Client, c *gin.Context, owner string, repo string, sha string) (string, []string) {
+	domiID, downloadRepoErr := downloadRepo(fs, githubClient, c, owner, repo, sha)
+	if downloadRepoErr != downloadRepoErr {
+		log.Println(downloadRepoErr)
+	}
+	targets, targetsError := targetDiscovery(fs, domiID)
+	if targetsError != nil {
+		log.Println(targetsError)
+	}
+	return domiID, targets
+}
+
 // ReceiveGitHubWebHook - Receives and processes GitHub WebHook Events
 func ReceiveGitHubWebHook(c *gin.Context) {
 	fs := lib.OSFS{}
 	// ctx := context.Background()
-	githubProvider, err := lib.NewGitHubProvider()
+	githubProvider, err := integrations.NewGitHubProvider()
 	if err != nil {
 		http.Error(c.Writer, "Could not get a provider.", 500)
 		return
@@ -161,14 +175,7 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 		if githubClientError != nil {
 			log.Println(githubClientError)
 		}
-		domiID, downloadRepoErr := downloadRepo(fs, githubClient, c, owner, repo, sha)
-		if downloadRepoErr != downloadRepoErr {
-			log.Println(downloadRepoErr)
-		}
-		targets, targetsError := targetDiscovery(fs, domiID)
-		if targetsError != nil {
-			log.Println(targetsError)
-		}
+		domiID, targets := downloadAndDiscover(fs, githubClient, c, owner, repo, sha)
 		status := "queued"
 		title := "domi - Policy-as-Code Enforcer"
 		summary := "**Status**: Queued"
@@ -192,8 +199,6 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 		cleanUpError := cleanUp(fs, domiID)
 		if cleanUpError != nil {
 			log.Println(cleanUpError)
-		} else {
-			log.Println("Event clean up complete.")
 		}
 		c.String(http.StatusOK, "Push Payload Received")
 	case github.CheckRunPayload:
@@ -214,19 +219,12 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 			if inProgressCheckError != nil {
 				log.Println(inProgressCheckError)
 			}
-			domiID, downloadRepoErr := downloadRepo(fs, githubClient, c, owner, repo, sha)
-			if downloadRepoErr != downloadRepoErr {
-				log.Println(downloadRepoErr)
-			}
-			targetFiles, targetsError := targetDiscovery(fs, domiID)
-			if targetsError != nil {
-				log.Println(targetsError)
-			}
+			domiID, targets := downloadAndDiscover(fs, githubClient, c, owner, repo, sha)
 			policyRepoID, policyRepoIDErr := downloadPolicyRepo(fs, githubClient, c)
 			if policyRepoIDErr != nil {
 				log.Println(policyRepoIDErr)
 			}
-			scanResults := lib.Scan(fs, policyRepoID, targetFiles)
+			scanResults := lib.Scan(fs, "/domi", policyRepoID, targets)
 			scanSummary, scanConclusion := lib.SummaryBuilder(scanResults)
 			completedCheckError := updateCheckRun(githubClient, c, owner, repo, checkRunID, "completed", scanConclusion, &ghclient.Timestamp{Time: time.Now()}, title, scanSummary)
 			if completedCheckError != nil {
@@ -235,14 +233,10 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 			cleanUpDomiIDError := cleanUp(fs, domiID)
 			if cleanUpDomiIDError != nil {
 				log.Println(cleanUpDomiIDError)
-			} else {
-				log.Println("domiID clean up complete.")
 			}
 			cleanUpPolicyIDError := cleanUp(fs, policyRepoID)
 			if cleanUpPolicyIDError != nil {
 				log.Println(cleanUpPolicyIDError)
-			} else {
-				log.Println("policyRepoID clean up complete.")
 			}
 		}
 		c.String(http.StatusOK, "Check Run Payload Received")

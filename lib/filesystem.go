@@ -2,12 +2,10 @@ package lib
 
 import (
 	"archive/zip"
-	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
-	"net/http"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -25,6 +23,7 @@ type FileSystem interface {
 	Walk(root string, walkFn filepath.WalkFunc) error
 	ReadFile(filename string) ([]byte, error)
 	WriteFile(filename string, data []byte, perm os.FileMode) error
+	NewFile(fd uintptr, name string) File
 }
 
 // File interface
@@ -69,42 +68,23 @@ func (OSFS) WriteFile(filename string, data []byte, perm os.FileMode) error {
 	return ioutil.WriteFile(filename, data, perm)
 }
 
+// NewFile - Creates a new File
+func (OSFS) NewFile(fd uintptr, name string) File {
+	return os.NewFile(fd, name)
+}
+
 type mockFS struct{}
 
 func (mockFS) Open(name string) (File, error)                                 { return nil, nil }
 func (mockFS) Copy(dst io.Writer, src io.Reader) (int64, error)               { return 100, nil }
-func (mockFS) Create(name string) (File, error)                               { return nil, nil }
-func (mockFS) Remove(name string) error                             		  { return nil }
-func (mockFS) RemoveAll(name string) error                             		  { return nil }
+func (mockFS) Create(name string) (File, error)                               { return os.NewFile(0, "fake"), nil }
+func (mockFS) Remove(name string) error                                       { return nil }
+func (mockFS) RemoveAll(name string) error                                    { return nil }
 func (mockFS) Stat(name string) (os.FileInfo, error)                          { return nil, nil }
 func (mockFS) Walk(root string, walkFn filepath.WalkFunc) error               { return nil }
 func (mockFS) ReadFile(filename string) ([]byte, error)                       { return []byte(`Test String`), nil }
 func (mockFS) WriteFile(filename string, data []byte, perm os.FileMode) error { return nil }
-
-// DownloadFile - Download a file from a URL
-func DownloadFile(fs FileSystem, url string) (string, error) {
-	response, err := http.Get(url)
-	if err != nil {
-		return "", err
-	}
-	defer response.Body.Close()
-	if response.StatusCode != 200 {
-		return "", errors.New("Received non 200 response code")
-	}
-	thisUUID := getUUID()
-	fileName := fmt.Sprintf("/domi/%s.zip", thisUUID)
-	file, err := fs.Create(fileName)
-	if err != nil {
-		return "", err
-	}
-	defer file.Close()
-	_, err = fs.Copy(file, response.Body)
-	if err != nil {
-		return "", err
-	}
-	log.Printf("Downloaded %s as %s\n", url, fileName)
-	return thisUUID, nil
-}
+func (mockFS) NewFile(fd uintptr, name string) File                           { return nil }
 
 func sanitizeExtractPath(filePath string, destination string) error {
 	destpath := filepath.Join(destination, filePath)
