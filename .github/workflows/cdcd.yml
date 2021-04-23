@@ -59,7 +59,7 @@ jobs:
 
       - name: Configure .kubeconfig
         run: |
-          aws eks --region us-east-1 update-kubeconfig --name domi-test-m6TWZUJC
+          aws eks --region us-east-1 update-kubeconfig --name domi-test-4iGsdgx7
           kubectl get svc
 
       - name: Helm Install
