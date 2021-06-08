@@ -190,3 +190,8 @@ func TestFindFiles(t *testing.T) {
 		t.Error()
 	}
 }
+
+func TestFileClose(t *testing.T) {
+	result := os.NewFile(13337, "../__testdata__/test1.txt")
+	defer checkClose(result)
+}
