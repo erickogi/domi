@@ -194,8 +194,8 @@ func TestFindFiles(t *testing.T) {
 
 func TestFileClose(t *testing.T) {
 	archive, err := zip.OpenReader("../__testdata__/test.zip")
-	defer checkClose(&archive)
 	if err != nil {
 		t.Error()
 	}
+	defer checkClose(&archive)
 }
