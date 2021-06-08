@@ -15,12 +15,9 @@ import (
 	"github.com/devops-kung-fu/domi/integrations"
 	"github.com/devops-kung-fu/domi/lib"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/webhooks/v6/github"
 	ghclient "github.com/google/go-github/v33/github"
-	"gopkg.in/go-playground/webhooks.v5/github"
 )
-
-// InstallationID is a temporary fix until https://github.com/go-playground/webhooks/pull/128 is merged.
-var InstallationID int64 = 0
 
 // CanYouHearMeNow - Responds to liveliness checks
 func CanYouHearMeNow(c *gin.Context) {
@@ -167,7 +164,6 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 	case github.PushPayload:
 		push := payload.(github.PushPayload)
 		githubProvider.InstallationID = int64(push.Installation.ID)
-		InstallationID = int64(push.Installation.ID)
 		owner := push.Repository.Owner.Login
 		repo := push.Repository.Name
 		sha := push.After
@@ -204,7 +200,7 @@ func ReceiveGitHubWebHook(c *gin.Context) {
 	case github.CheckRunPayload:
 		check := payload.(github.CheckRunPayload)
 		if check.Action == "created" && check.CheckRun.App.ID == int64(githubProvider.AppID) {
-			githubProvider.InstallationID = InstallationID
+			githubProvider.InstallationID = check.Installation.ID
 			owner := check.Repository.Owner.Login
 			repo := check.Repository.Name
 			checkRunID := check.CheckRun.ID

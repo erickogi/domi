@@ -1,9 +1,8 @@
-
 ![](img/domi128x128.png)
 
 # domi
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/devops-kung-fu/domi)](https://goreportcard.com/report/github.com/devops-kung-fu/domi) [![codecov](https://codecov.io/gh/devops-kung-fu/domi/branch/main/graph/badge.svg?token=R1TFX89WFQ)](https://codecov.io/gh/devops-kung-fu/domi) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/devops-kung-fu/domi)
+[![Go Report Card](https://goreportcard.com/badge/github.com/devops-kung-fu/domi)](https://goreportcard.com/report/github.com/devops-kung-fu/domi) [![codecov](https://codecov.io/gh/devops-kung-fu/domi/branch/main/graph/badge.svg?token=R1TFX89WFQ)](https://codecov.io/gh/devops-kung-fu/domi) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/devops-kung-fu/domi) [![SBOM](https://img.shields.io/badge/CyloneDX-SBoM-informational)](sbom.json)
 
 
 __NOTICE: This documentation and project is under active development. Consider this pre-alpha.__

@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.2",
-  "serialNumber": "urn:uuid:31b8d6a8-1a2d-46ac-bbdc-95f9a53f5f0f",
+  "serialNumber": "urn:uuid:338930b9-5a47-4554-a427-5316c69024ef",
   "version": 1,
   "metadata": {
-    "timestamp": "2021-06-08T08:13:18-04:00",
+    "timestamp": "2021-06-08T08:34:26-04:00",
     "tools": [
       {
         "vendor": "CycloneDX",
@@ -31,11 +31,11 @@
       }
     ],
     "component": {
-      "bom-ref": "pkg:golang/github.com/devops-kung-fu/domi@v0.0.0-20210423192125-d62648441ff1",
+      "bom-ref": "pkg:golang/github.com/devops-kung-fu/domi@v0.0.0-20210608081258-05a7d062f423",
       "type": "application",
       "name": "github.com/devops-kung-fu/domi",
-      "version": "v0.0.0-20210423192125-d62648441ff1",
-      "purl": "pkg:golang/github.com/devops-kung-fu/domi@v0.0.0-20210423192125-d62648441ff1",
+      "version": "v0.0.0-20210608081258-05a7d062f423",
+      "purl": "pkg:golang/github.com/devops-kung-fu/domi@v0.0.0-20210608081258-05a7d062f423",
       "externalReferences": [
         {
           "url": "https://github.com/devops-kung-fu/domi",
@@ -229,6 +229,34 @@
       "externalReferences": [
         {
           "url": "https://github.com/go-playground/validator/v10",
+          "type": "vcs"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:golang/github.com/go-playground/webhooks/v6@v6.0.0-beta.3",
+      "type": "library",
+      "name": "github.com/go-playground/webhooks/v6",
+      "version": "v6.0.0-beta.3",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "42d18d3dd21747e22042294ec7f2925bfb874becc3d06d5789f2442f3ac621b8"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT",
+            "url": "https://spdx.org/licenses/MIT.html"
+          }
+        }
+      ],
+      "purl": "pkg:golang/github.com/go-playground/webhooks/v6@v6.0.0-beta.3",
+      "externalReferences": [
+        {
+          "url": "https://github.com/go-playground/webhooks/v6",
           "type": "vcs"
         }
       ]
@@ -630,34 +658,6 @@
       "purl": "pkg:golang/google.golang.org/protobuf@v1.26.0"
     },
     {
-      "bom-ref": "pkg:golang/gopkg.in/go-playground/webhooks.v5@v5.17.0",
-      "type": "library",
-      "name": "gopkg.in/go-playground/webhooks.v5",
-      "version": "v5.17.0",
-      "scope": "required",
-      "hashes": [
-        {
-          "alg": "SHA-256",
-          "content": "b6bb8171e77966692234a2b8edc33c6cc7bceb05128cd92ced214cb8d2b0ce57"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MIT",
-            "url": "https://spdx.org/licenses/MIT.html"
-          }
-        }
-      ],
-      "purl": "pkg:golang/gopkg.in/go-playground/webhooks.v5@v5.17.0",
-      "externalReferences": [
-        {
-          "url": "https://github.com/go-playground/webhooks",
-          "type": "vcs"
-        }
-      ]
-    },
-    {
       "bom-ref": "pkg:golang/gopkg.in/yaml.v2@v2.4.0",
       "type": "library",
       "name": "gopkg.in/yaml.v2",
@@ -758,6 +758,9 @@
       ]
     },
     {
+      "ref": "pkg:golang/github.com/go-playground/webhooks/v6@v6.0.0-beta.3"
+    },
+    {
       "ref": "pkg:golang/github.com/golang/protobuf@v1.5.2",
       "dependsOn": [
         "pkg:golang/google.golang.org/protobuf@v1.26.0"
@@ -830,17 +833,15 @@
       ]
     },
     {
-      "ref": "pkg:golang/gopkg.in/go-playground/webhooks.v5@v5.17.0"
-    },
-    {
       "ref": "pkg:golang/gopkg.in/yaml.v2@v2.4.0"
     },
     {
-      "ref": "pkg:golang/github.com/devops-kung-fu/domi@v0.0.0-20210423192125-d62648441ff1",
+      "ref": "pkg:golang/github.com/devops-kung-fu/domi@v0.0.0-20210608081258-05a7d062f423",
       "dependsOn": [
         "pkg:golang/github.com/bradleyfalzon/ghinstallation@v1.1.1",
         "pkg:golang/github.com/gin-gonic/gin@v1.7.2",
         "pkg:golang/github.com/go-playground/validator/v10@v10.6.1",
+        "pkg:golang/github.com/go-playground/webhooks/v6@v6.0.0-beta.3",
         "pkg:golang/github.com/golang/protobuf@v1.5.2",
         "pkg:golang/github.com/google/go-github/v29@v29.0.3",
         "pkg:golang/github.com/google/go-github/v33@v33.0.0",
@@ -854,7 +855,6 @@
         "pkg:golang/golang.org/x/crypto@v0.0.0-20210513164829-c07d793c2f9a",
         "pkg:golang/golang.org/x/sys@v0.0.0-20210608053332-aa57babbf139",
         "pkg:golang/golang.org/x/text@v0.3.6",
-        "pkg:golang/gopkg.in/go-playground/webhooks.v5@v5.17.0",
         "pkg:golang/gopkg.in/yaml.v2@v2.4.0",
         "pkg:golang/std@1.16.2"
       ]

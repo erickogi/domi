@@ -40,7 +40,6 @@ func Scan(fs FileSystem, rootPath string, policyID string, files []string) Conft
 			break
 		}
 	}
-	fmt.Println(policyPath)
 	cmd := exec.Command("conftest", "test", "--all-namespaces", "--fail-on-warn", "-o", "json", "-p", policyPath)
 	cmd.Args = append(cmd.Args, files...)
 	output, _ := cmd.Output()
