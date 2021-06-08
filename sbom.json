@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.2",
-  "serialNumber": "urn:uuid:338930b9-5a47-4554-a427-5316c69024ef",
+  "serialNumber": "urn:uuid:5d913b9f-c265-4ee1-be2e-95db7ce40947",
   "version": 1,
   "metadata": {
-    "timestamp": "2021-06-08T08:34:26-04:00",
+    "timestamp": "2021-06-08T08:42:27-04:00",
     "tools": [
       {
         "vendor": "CycloneDX",
@@ -31,11 +31,11 @@
       }
     ],
     "component": {
-      "bom-ref": "pkg:golang/github.com/devops-kung-fu/domi@v0.0.0-20210608081258-05a7d062f423",
+      "bom-ref": "pkg:golang/github.com/devops-kung-fu/domi@v0.0.0-20210608083402-f1333d942590",
       "type": "application",
       "name": "github.com/devops-kung-fu/domi",
-      "version": "v0.0.0-20210608081258-05a7d062f423",
-      "purl": "pkg:golang/github.com/devops-kung-fu/domi@v0.0.0-20210608081258-05a7d062f423",
+      "version": "v0.0.0-20210608083402-f1333d942590",
+      "purl": "pkg:golang/github.com/devops-kung-fu/domi@v0.0.0-20210608083402-f1333d942590",
       "externalReferences": [
         {
           "url": "https://github.com/devops-kung-fu/domi",
@@ -836,7 +836,7 @@
       "ref": "pkg:golang/gopkg.in/yaml.v2@v2.4.0"
     },
     {
-      "ref": "pkg:golang/github.com/devops-kung-fu/domi@v0.0.0-20210608081258-05a7d062f423",
+      "ref": "pkg:golang/github.com/devops-kung-fu/domi@v0.0.0-20210608083402-f1333d942590",
       "dependsOn": [
         "pkg:golang/github.com/bradleyfalzon/ghinstallation@v1.1.1",
         "pkg:golang/github.com/gin-gonic/gin@v1.7.2",
