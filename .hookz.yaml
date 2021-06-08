@@ -1,4 +1,4 @@
-  version: 2.1
+  version: 2.2
   hooks:
     - type: pre-commit
       actions:
@@ -14,6 +14,30 @@
         - name: "Run gofmt to format the code"
           exec: gofmt
           args: ["-s", "-w", "**/*.go"]
+        - name: "golint: Lint all go files"
+          exec: golint
+          args: ["./..."]
+        - name: "errcheck: Check that errors are checked"
+          exec: errcheck
+          args: ["-ignoretests", "./..."]
+        - name: "gocyclo: Check cyclomatic complexities"
+          exec: gocyclo
+          args: ["."]
+        - name: "go: Build (Ensure pulled modules do not break the build)"
+          exec: go
+          args: ["build", "-v"]
+        - name: "go: Run all tests"
+          exec: go
+          args: ["test", "-v", "-coverprofile=coverage.out", "./..."]
+        - name: "go: Test coverage"
+          exec: go
+          args: ["tool", "cover", "-func=coverage.out"]
+        - name: Hinge
+          url: https://github.com/devops-kung-fu/hinge/releases/download/v0.1.0/hinge-0.1.0-linux-amd64
+          args: ["."]
+        - name: "cyclone-dx: Generate a Software Bill of Materials (SBoM)"
+          exec: cyclonedx-gomod
+          args: ["-json", "-output", "sbom.json", "-std", "-licenses"]
         - name: "Add all changed files during the pre-commit stage"
           exec: git
           args: ["add", "."]

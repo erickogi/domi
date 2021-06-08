@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/devops-kung-fu/domi/routes"
 )
 
@@ -12,5 +14,8 @@ func main() {
 	fmt.Println("Starting server on port 8080")
 
 	r := routes.SetupRouter()
-	r.Run()
+	err := r.Run()
+	if err != nil {
+		log.Fatal("An error has ocurred while starting the server.")
+	}
 }

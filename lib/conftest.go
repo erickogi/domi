@@ -40,11 +40,15 @@ func Scan(fs FileSystem, rootPath string, policyID string, files []string) Conft
 			break
 		}
 	}
+	fmt.Println(policyPath)
 	cmd := exec.Command("conftest", "test", "--all-namespaces", "--fail-on-warn", "-o", "json", "-p", policyPath)
 	cmd.Args = append(cmd.Args, files...)
 	output, _ := cmd.Output()
 	log.Println(string(output))
 	conftestResults := ConftestResults{}
-	json.Unmarshal(output, &conftestResults)
+	unMarshalErr := json.Unmarshal(output, &conftestResults)
+	if unMarshalErr != nil {
+		log.Fatal("There was an error unmarshalling the Conftest result.")
+	}
 	return conftestResults
 }

@@ -56,7 +56,7 @@ func (githubProvider *GitHubProvider) GitHubAuthenticator(rootPath string) (*git
 	bytesWritten, err := pemFile.WriteString(githubProvider.githubPrivateKey)
 	if err != nil {
 		log.Println(err)
-		pemFile.Close()
+		_ = pemFile.Close()
 		return nil, errors.New("Error writing to PEM file")
 	}
 	fmt.Println(bytesWritten, "bytes written successfully to PEM File")
