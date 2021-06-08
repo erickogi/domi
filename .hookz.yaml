@@ -26,12 +26,6 @@
         - name: "go: Build (Ensure pulled modules do not break the build)"
           exec: go
           args: ["build", "-v"]
-        - name: "go: Run all tests"
-          exec: go
-          args: ["test", "-v", "-coverprofile=coverage.out", "./..."]
-        - name: "go: Test coverage"
-          exec: go
-          args: ["tool", "cover", "-func=coverage.out"]
         - name: Hinge
           url: https://github.com/devops-kung-fu/hinge/releases/download/v0.1.0/hinge-0.1.0-linux-amd64
           args: ["."]
