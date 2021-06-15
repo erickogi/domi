@@ -197,5 +197,5 @@ func TestFileClose(t *testing.T) {
 	if err != nil {
 		t.Error()
 	}
-	defer checkClose(&archive)
+	defer CheckClose(&archive)
 }

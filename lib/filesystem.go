@@ -100,13 +100,13 @@ func UnZip(source string, destination string) error {
 	if err != nil {
 		return err
 	}
-	defer checkClose(archive)
+	defer CheckClose(archive)
 	for _, file := range archive.Reader.File {
 		reader, err := file.Open()
 		if err != nil {
 			return err
 		}
-		defer checkClose(reader)
+		defer CheckClose(reader)
 		path := filepath.Join(destination, file.Name)
 		// Remove file if it already exists; no problem if it doesn't; other cases can error out below
 		_ = os.Remove(path)
@@ -134,7 +134,7 @@ func UnZip(source string, destination string) error {
 		if err != nil {
 			return err
 		}
-		defer checkClose(writer)
+		defer CheckClose(writer)
 		_, err = io.Copy(writer, reader)
 		if err != nil {
 			return err
@@ -163,7 +163,8 @@ func FindFiles(fs FileSystem, root string, re string) ([]string, error) {
 	return files, nil
 }
 
-func checkClose(v interface{}) {
+// CheckClose safe closing for defer
+func CheckClose(v interface{}) {
 	if d, ok := v.(io.ReadCloser); ok {
 		_ = d.Close()
 	} else if d, ok := v.(io.Closer); ok {
