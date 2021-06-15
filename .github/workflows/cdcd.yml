@@ -50,22 +50,22 @@ jobs:
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH,MEDIUM'
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+      # - name: Configure AWS Credentials
+      #   uses: aws-actions/configure-aws-credentials@v1
+      #   with:
+      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     aws-region: us-east-1
 
-      - name: Configure .kubeconfig
-        run: |
-          aws eks --region us-east-1 update-kubeconfig --name domi-test-4iGsdgx7
-          kubectl get svc
+      # - name: Configure .kubeconfig
+      #   run: |
+      #     aws eks --region us-east-1 update-kubeconfig --name domi-test-4iGsdgx7
+      #     kubectl get svc
 
-      - name: Helm Install
-        run: helm upgrade domi ./domi-chart
+      # - name: Helm Install
+      #   run: helm upgrade domi ./domi-chart
 
-      - name: domi URL
-        run: |
-          export SERVICE_IP=$(kubectl get svc --namespace default domi --template "{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}")
-          echo http://$SERVICE_IP:80
+      # - name: domi URL
+      #   run: |
+      #     export SERVICE_IP=$(kubectl get svc --namespace default domi --template "{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}")
+      #     echo http://$SERVICE_IP:80

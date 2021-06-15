@@ -20,6 +20,6 @@ jobs:
           release_name: Release ${{ github.ref }}
           body: |
             This domi release includes:
-            - Trivy
+            - Installation ID from Check Run response.
           draft: false
           prerelease: false
