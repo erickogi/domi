@@ -45,6 +45,10 @@ func Scan(fs FileSystem, rootPath string, policyID string, files []string) Conft
 	output, _ := cmd.Output()
 	log.Println(string(output))
 	conftestResults := ConftestResults{}
-	json.Unmarshal(output, &conftestResults)
+	unMarshalErr := json.Unmarshal(output, &conftestResults)
+	if unMarshalErr != nil {
+		log.Println("There was an error unmarshalling the Conftest result.")
+		return nil
+	}
 	return conftestResults
 }

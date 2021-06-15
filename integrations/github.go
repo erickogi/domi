@@ -9,6 +9,7 @@ import (
 	"strconv"
 
 	"github.com/bradleyfalzon/ghinstallation"
+	"github.com/devops-kung-fu/domi/lib"
 	"github.com/google/go-github/v33/github"
 )
 
@@ -53,14 +54,13 @@ func (githubProvider *GitHubProvider) GitHubAuthenticator(rootPath string) (*git
 		log.Println(err)
 		return nil, errors.New("Error creating PEM file")
 	}
+	defer lib.CheckClose(pemFile)
 	bytesWritten, err := pemFile.WriteString(githubProvider.githubPrivateKey)
 	if err != nil {
 		log.Println(err)
-		pemFile.Close()
 		return nil, errors.New("Error writing to PEM file")
 	}
 	fmt.Println(bytesWritten, "bytes written successfully to PEM File")
-	err = pemFile.Close()
 	if err != nil {
 		fmt.Println(err)
 		return nil, errors.New("Error closing PEM file")

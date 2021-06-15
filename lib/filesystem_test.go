@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"archive/zip"
 	"os"
 	"testing"
 )
@@ -189,4 +190,12 @@ func TestFindFiles(t *testing.T) {
 	if err != nil {
 		t.Error()
 	}
+}
+
+func TestFileClose(t *testing.T) {
+	archive, err := zip.OpenReader("../__testdata__/test.zip")
+	if err != nil {
+		t.Error()
+	}
+	defer CheckClose(&archive)
 }
