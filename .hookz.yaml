@@ -1,4 +1,4 @@
-  version: 2.2
+  version: 2.3
   hooks:
     - type: pre-commit
       actions:
@@ -27,7 +27,7 @@
           exec: go
           args: ["build", "-v"]
         - name: Hinge
-          url: https://github.com/devops-kung-fu/hinge/releases/download/v0.1.0/hinge-0.1.0-linux-amd64
+          url: https://github.com/devops-kung-fu/hinge/releases/download/v0.1.1/hinge-0.1.1-%%PLATFORM%%-amd64
           args: ["."]
         - name: "cyclone-dx: Generate a Software Bill of Materials (SBoM)"
           exec: cyclonedx-gomod
